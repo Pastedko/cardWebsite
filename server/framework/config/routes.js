@@ -1,5 +1,9 @@
 const authController=require('../controllers/auth')
+const gamesController=require('../controllers/games')
+const gameController=require('../controllers/game')
 
 module.exports=(app)=>{
     app.use(authController);
+    app.use(gamesController);
+    app.use(gameController)
 }

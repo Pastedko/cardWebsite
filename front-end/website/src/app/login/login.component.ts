@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import {CookieService} from 'ngx-cookie-service'
 
 @Component({
   selector: 'app-login',
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private _auth:AuthService,private router:Router) { }
+  constructor(private _auth:AuthService,private router:Router,private cookieService:CookieService) { }
   loginUserData={
     email:"",
     password:""
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   login(){
     console.log(this.loginUserData)
     this._auth.loginUser(this.loginUserData).subscribe(
-      res=>this.router.navigate(['/']),
+      res=>{localStorage.clear();localStorage.setItem('token',res.token);this.router.navigate(['/']);},
       err=>console.log(err)
     )
   }

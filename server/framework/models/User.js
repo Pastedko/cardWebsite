@@ -1,12 +1,16 @@
-const {Schema,model}=require('mongoose');
+const { default: mongoose } = require('mongoose');
+const {Schema,model,Types:{ObjectId}}=require('mongoose');
+const {Game}=require('./Games');
 
-//TODO change model
+
 const userSchema=new Schema({
     username:{type:String,required:true},
-    hashedPassword:{type:String,required:true}
+    email:{type:String,required:true},
+    hashedPassword:{type:String,required:true},
+    currentGame:{type:ObjectId,ref:"Game",default:null}
 })
 
-userSchema.index({username:1},{
+userSchema.index({email:1},{
     unique:true,
     collation:{
         locale:'en',

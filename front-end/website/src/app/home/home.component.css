@@ -1,0 +1,11 @@
+img {width:100%;}
+.car-image-block {padding:0px;margin:0px;}
+.car-image-block img {min-height: 200px; overflow: hidden;}
+
+.cars-horizon{
+    position: fixed;
+    top: 150px;
+    left: 30%;
+    height: 800px;
+    overflow-y: scroll;
+}

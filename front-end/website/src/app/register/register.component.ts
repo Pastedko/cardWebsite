@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -14,11 +15,11 @@ export class RegisterComponent implements OnInit {
     "password":"",
     "passwordAgain":""
   };
-  constructor(private _auth:AuthService,private router:Router) { }
+  constructor(private _auth:AuthService,private router:Router,private cookieService:CookieService) { }
   register(){
     console.log(this.registerUserData)
     this._auth.registerUser(this.registerUserData).subscribe(
-      res=>this.router.navigate(['/']),
+      res=>{localStorage.clear();localStorage.setItem('token',res.token);this.router.navigate(['/']);},
       err=>console.log(err)
     )
   }
@@ -26,3 +27,5 @@ export class RegisterComponent implements OnInit {
   }
 
 }
+
+

@@ -2,6 +2,9 @@ const express = require('express');
 const {create:handlebars}=require('express-handlebars');
 const session=require('express-session');
 const cors=require('cors')
+const cookieParser=require('cookie-parser')
+
+
 
 module.exports=(app)=>{
     app.engine('.hbs',handlebars({
@@ -18,6 +21,6 @@ module.exports=(app)=>{
             secure:'auto'
         }
     }))
-    app.use(cors())
+    app.use(cookieParser())
     app.use(express.urlencoded({extended:true}));
 }

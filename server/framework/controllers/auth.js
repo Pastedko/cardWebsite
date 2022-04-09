@@ -1,8 +1,10 @@
 const {Router}=require('express');
+const { Cookie } = require('express-session');
 const { isUser,isGuest } = require('../middleware/guard');
 const { register } = require('../services/user');
 const {login}=require('../services/user');
 const mapErrors = require('../util/mappers');
+const jwt=require('jsonwebtoken');
 
 const router=Router();
 
@@ -16,10 +18,11 @@ router.post('/register',async (req,res)=>{
     if(req.body.password!=req.body.passwordAgain){
         throw new Error('Passwords don\'t match')
     }
-    const user=await register(req.body.username,req.body.password);
-    req.session.user=user;
+    const user=await register(req.body.email,req.body.password,req.body.username);
+    let payload={subject:user._id};
+    let token=jwt.sign(payload,'secretKey');
+    res.status(200).send({token});
     //res.redirect('/');//TODO check redirect requirements
-    res.end()
     }
     catch(err){
         const errors=mapErrors(err);
@@ -35,6 +38,9 @@ router.get('/login',isGuest(),(req,res)=>{
 router.post('/login',isGuest(),async (req,res)=>{
     try{
         const user=await login(req.body.email,req.body.password);
+        let payload={subject:user._id};
+        let token=jwt.sign(payload,'secretKey');
+        res.status(200).send({token});
        // req.session.user=user;
        // res.redirect('/');//TODO check redirect requirements
         }
@@ -48,6 +54,15 @@ router.post('/login',isGuest(),async (req,res)=>{
 router.get('/logout',isUser(),(req,res)=>{
     delete req.session.user;
     res.redirect('/');
+})
+
+//router.get('/special',verifyToken(),(req,res)=>{
+    
+//})
+router.post('/guest',(req,res)=>{
+    let payload={subject:Math.floor(Math.random()*1000)}
+    let token=jwt.sign(payload,'secretKey');
+    res.status(200).send({token})
 })
 
 module.exports=router;
