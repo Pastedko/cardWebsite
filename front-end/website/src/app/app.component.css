@@ -13,6 +13,11 @@
 	margin-bottom: 0px;
 	z-index: 100;
 }
+html, body, app-root {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	}
 .navbar-bootsnipp:nth-of-type(2) {
 	border-top-width: 1px;
 	z-index: 50

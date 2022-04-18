@@ -38,7 +38,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
   async ngOnInit(): Promise<void> {
     await this.updateLobby();
-    this.isLobbyOwner();
+    await this._socket.gameHasStarted()
+    setTimeout(()=>{this.isLobbyOwner();},100);
     this.subInterval = this.interval.subscribe(() => { if (this._socket.hasUpdated == true) { this.updateLobby(); this._socket.hasUpdated = false; } if(this._socket.hasStarted==true)this.router.navigate([`game/${this.game._id}`])})
 
 
@@ -53,11 +54,11 @@ export class LobbyComponent implements OnInit, OnDestroy {
         this.game = res; res.players.forEach((el: any[]) => {
           if (el[1] == 1) {
             if (typeof el[0] == "number") { this.players.push("Guest " + el[0]); this.team1.push("Guest " + el[0]) }
-            else { this.players.push("Guest " + el[0]); this.team1.push(el[0].username); }
+            else { this.players.push(el[0]); this.team1.push(el[0].username); }
           }
           else {
             if (typeof el[0] == "number") { this.players.push("Guest " + el[0]); this.team2.push("Guest " + el[0]) }
-            else { this.players.push("Guest " + el[0].username); this.team2.push(el[0].username); }
+            else { this.players.push(el[0].username); this.team2.push(el[0].username); }
           }
         });
       },
@@ -90,7 +91,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     if (!!localStorage.getItem('token')) {
       user._id = localStorage.getItem('token')!;
       this._user.getUsername(user._id).subscribe(
-        res => { if (this.players[0] == res.username) { this.isOwner = true; } },
+        res => {console.log(this.players[0]); if (this.players[0].username == res.username) { this.isOwner = true; } },
         err => { console.log(err) }
       )
     }
@@ -168,7 +169,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
   confirmChange(){
     
   }
-  startGame() {
-    if (this.team1.length + this.team2.length == 4) this.router.navigate([`game/${this.game._id}`])
+  async startGame() {
+   // if (this.team1.length + this.team2.length == 4)
+    this.router.navigate([`game/${this.game._id}`])
+    this._socket.startGame(this.game);
   }
 }

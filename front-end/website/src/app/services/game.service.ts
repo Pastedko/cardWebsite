@@ -9,10 +9,10 @@ import { Socket } from 'ngx-socket-io';
 })
 export class GameService {
 
-  _dealCardsUrl="http://localhost:3000/dealCards/12321";
+  _checkCardsUrl="http://localhost:3000/allowed";
   constructor(private http:HttpClient,private router:Router,private socket:Socket) { }
 
-  dealCards(){
-    return this.http.get<any>(this._dealCardsUrl)
+  isAllowed(card:any,hand:any[],game:any){
+    return this.http.post<any>(this._checkCardsUrl,{card:card,hand:hand,game:game})
   }
 }

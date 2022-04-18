@@ -14,7 +14,7 @@ const routes: Routes = [
   {path:"login",component:LoginComponent,canActivate:[IsNotLoggedGuard]},
   {path:"create",component:CreateComponent},
   {path:"lobby/:id",component:LobbyComponent},
-  {path:"game",component:GameComponent}
+  {path:"game/:id",component:GameComponent}
 ];
 
 @NgModule({

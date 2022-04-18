@@ -26,6 +26,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GameComponent } from './game/game.component';
 import { GameService } from './services/game.service';
 import { GameSocketService } from './services/game-socket.service';
+import { CallsPopupComponent } from './calls-popup/calls-popup.component';
+import {MatListModule} from '@angular/material/list';
 
 const config:SocketIoConfig={
   url:environment.socketUrl,
@@ -42,7 +44,8 @@ const config:SocketIoConfig={
     CreateComponent,
     LobbyComponent,
     PasswordForLobbyComponent,
-    GameComponent
+    GameComponent,
+    CallsPopupComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ const config:SocketIoConfig={
     MatDialogModule,
     MatFormFieldModule,
     BrowserAnimationsModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule
   ],
   providers: [AuthService,AuthGuard,IsNotLoggedGuard,UserService,SocketService,GameService,GameSocketService,
   {

@@ -23,7 +23,6 @@ export class SocketService {
     this.socket.emit("gameCreated",game)
   }
   joinGame(game: any) {
-    console.log("hello")
     this.socket.emit("gameLobbyJoin", game);
   }
   leaveGame(game:any){
@@ -34,7 +33,6 @@ export class SocketService {
   }
   gameLobby() {
     this.socket.on("gameLobby", (game: any) => {
-      console.log("ayo")
       this.hasUpdated=true;
     })
   }

@@ -24,7 +24,6 @@ async function createLobby(lobby) {
         active: lobby.active
     })
     game.players.push([player,1]);
-    console.log(game.players)
     let games = await getAllGames();
     games.forEach(el => {
         if (findUserInGame(player._id, el)) {
@@ -58,18 +57,19 @@ async function joinGame(user, game) {
     if (typeof user != "number") {
         result = await getUserById(user);
         result.currentGame = mongoose.Types.ObjectId(lobby._id);
+        result.markModified("players");
         await result.save();
     }
     
     let games = await getAllGames();
     games.forEach(el => {
         if (findUserInGame(user, el)) {
-            console.log("ok")
             leaveGame(user, el._id)
         }
     })
     let team=chooseTeam(lobby);
     lobby.players.push([result,team]);
+    lobby.markModified("players");
     await lobby.save();
     return lobby;
 }
@@ -143,6 +143,7 @@ async function leaveGame(user, game) {
             lobby.players.splice(i,1);
         }
         sendMessage(String(lobby._id),"gameLobby",lobby._id)
+        lobby.markModified("players");
         await lobby.save();
         return lobby;
     }
@@ -161,12 +162,13 @@ async function changeTeam(user,game){
         for( i=0;i<lobby.players.length;i++){
             if(lobby.players[i][0]==user)break;
         }
-        lobby.players[i][1]=1-lobby.players[i][1];
+        lobby.players[i][1]=3-lobby.players[i][1];
     }
     lobby.markModified("players")
     await lobby.save();
     return lobby;
 }
+
 
 
 module.exports = {
@@ -177,5 +179,5 @@ module.exports = {
     findUserInGame,
     findGameById,
     leaveGame,
-    changeTeam
+    changeTeam,
 }

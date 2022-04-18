@@ -9,7 +9,34 @@
 
 /* card itself
 ********************************************************************/
-
+.calls{
+    position:fixed;
+    bottom: 40%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%);
+    display: inline-block;
+}
+.playedCards{
+    position:fixed;
+    bottom: 60%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%);
+}
+.playingTable{
+    display: inline-block;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgb(52, 199, 23) !important;
+}
+.playerCards{
+    position:fixed;
+    bottom: 0px;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%);
+}
 .playingCards .card {
     display: inline-block;
     width: 3.3em;
@@ -22,10 +49,11 @@
     padding: .25em;
     margin: 0 .5em .5em 0;
     text-align: center;
-    font-size: 2.5em; /* @change: adjust this value to make bigger or smaller cards */
+    font-size: 2.0em; /* @change: adjust this value to make bigger or smaller cards */
     font-weight: normal;
     font-family: Arial, sans-serif;
     position: relative;
+    bottom: 0px;
     background-color: #fff;
     -moz-box-shadow: .2em .2em .5em #333;
     -webkit-box-shadow: .2em .2em .5em #333;
@@ -103,7 +131,7 @@
     line-height: 1;
     text-align: left;
 }
-/*.playingCards .card .rank {}*/
+.playingCards .card .rank,
 .playingCards .card .suit {
     line-height: .7;
 }
@@ -407,22 +435,22 @@
 .playingCards.simpleCards .card.diams .suit:after,
 .playingCards .card.rank-a.diams .suit:after {
     content: "\2666";
-    right: .4em;
+    right: .3em;
 }
 .playingCards.simpleCards .card.hearts .suit:after,
 .playingCards .card.rank-a.hearts .suit:after {
     content: "\2665";
-    right: .35em;
+    right: .25em;
 }
 .playingCards.simpleCards .card.spades .suit:after,
 .playingCards .card.rank-a.spades .suit:after {
     content: "\2660";
-    right: .35em;
+    right: .3em;
 }
 .playingCards.simpleCards .card.clubs .suit:after,
 .playingCards .card.rank-a.clubs .suit:after {
     content: "\2663";
-    right: .3em;
+    right: .25em;
 }
 
 /*____________ smaller cards for use inside text ____________*/
