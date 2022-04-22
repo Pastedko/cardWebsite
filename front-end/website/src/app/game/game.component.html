@@ -1,18 +1,75 @@
 
   <div class="playingTable">
+      <div class="scoreBoard">
+        <p>{{team1Score}}:{{team2Score}}</p>
+      </div>
+
+      <p *ngIf="call!=-1">{{call}}</p>
+      <ul *ngIf="premiumsAllowed" class="callBtns">
+          <li>
+          <button (click)="callPremium(0)">Tierce</button>
+        </li>
+        <li>
+          <button (click)="callPremium(1)">Quarte</button>
+        </li>
+        <li>
+          <button (click)="callPremium(2)">Quint</button>
+        </li>
+        <li>
+          <button (click)="callPremium(3)">Square</button>
+        </li>
+      </ul>
       <div class="playedCards">
         <div class="playingCards simpleCards">
             <ul class="table">
                 <li *ngFor="let card of playedCards;index as i">
-                    <a (click)="playCard(i)" [class]="card.name" class="card">
+                    <div (click)="playCard(i)" [class]="card.name" class="card">
                         <span class="rank">{{card.face}}</span>
                         <span class="suit">{{card.suit}}</span>
-                    </a>
+                    </div>
                 </li>
             </ul>
         </div>
-        
       </div>
+
+      
+
+
+
+      <picture  [style.border-color]="turn ? 'yellow':'red'" class="userPicture">
+        <img src="../../../src/guest-user-250x250.png" alt="Flowers" style="width:auto;">
+      </picture>
+
+      <div *ngIf="premiumsCalled[0]" class="speech-bubble1">
+        <p>{{premiumsCalled[0]}}</p>
+      </div>
+
+      <picture  [style.border-color]="positions[1][2] ? 'yellow':'red'" class="player2Picture">
+        <img src="../../../src/guest-user-250x250.png" alt="Flowers" style="width:auto;">
+      </picture>
+      <div *ngIf="premiumsCalled[1]" class="speech-bubble2">
+        <p>{{premiumsCalled[1]}}</p>
+      </div>
+
+
+      <picture  [style.border-color]="positions[2][2] ? 'yellow':'red'" class="player3Picture">
+        <img src="../../../src/guest-user-250x250.png" alt="Flowers" style="width:auto;">
+      </picture>
+      <div *ngIf="premiumsCalled[2]" class="speech-bubble3">
+        <p>{{premiumsCalled[2]}}</p>
+      </div>
+
+
+      <picture  [style.border-color]="positions[3][2] ? 'yellow':'red'" class="player4Picture">
+        <img src="../../../src/guest-user-250x250.png" alt="Flowers" style="width:auto;">
+      </picture>
+      <div *ngIf="premiumsCalled[3]" class="speech-bubble4">
+        <p>{{premiumsCalled[3]}}</p>
+      </div>
+
+
+
+
       <div [style.display]="callActive ? 'inline-block':'none'"  class="calls" #calls>
         <button (click)="makeCall(5)"> All trumps </button> 
         <button (click)="makeCall(4)"> No trumps </button>
@@ -25,7 +82,7 @@
       </div>
    <div class="playerCards">
         <div class="playingCards simpleCards">
-            <ul class="table">
+            <ul class="hand">
                 <li *ngFor="let card of hand;index as i">
                     <a (click)="playCard(i)" [class]="card.name" class="card">
                         <span class="rank">{{card.face}}</span>

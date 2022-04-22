@@ -6,6 +6,7 @@ import { io } from "socket.io-client"
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserService } from './user.service';
+import { Game } from '../game';
 
 
 
@@ -56,5 +57,7 @@ export class SocketService {
   startGame(game:any){
     this.socket.emit("gameStarted",game);
   }
-
+  recconect(game:any){
+    this.socket.emit("reconnect",game);
+  }
 }

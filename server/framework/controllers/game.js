@@ -7,7 +7,7 @@ const mapErrors = require('../util/mappers');
 const jwt=require('jsonwebtoken');
 const jwt_decode=require("jwt-decode");
 const {createLobby,getAllGames,joinGame, findGameById,leaveGame, changeTeam}=require('../services/game');
-const {dealCards,allowedCards,findCard}=require("../services/cards")
+const {dealCards,allowedCards,findCard, checkPremium, gameEnd}=require("../services/cards")
 const { createServer } = require('http');
 const Game=require('../models/Games')
 const router=Router();
@@ -27,10 +27,18 @@ router.post("/allowed",async(req,res)=>{
     if(myGame.playedCards.length!=0){
     let allowed=await allowedCards(hand,game);
     let result=findCard(card,allowed)
-    res.send(result);
+    res.status(200).send(result);
     }
     else
-    res.send(true);
+    res.status(200).send(true);
+})
+
+router.post("/premium",async(req,res)=>{
+    let game=req.body.game;
+    let highestCard=req.body.card;
+    let call=req.body.call;
+    let result = await checkPremium(highestCard,call,game);
+    res.status(200).send(result)
 })
 
 

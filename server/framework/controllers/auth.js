@@ -45,6 +45,7 @@ router.post('/login',isGuest(),async (req,res)=>{
        // res.redirect('/');//TODO check redirect requirements
         }
         catch(err){
+            res.status(409).send(err.message);
             const errors=mapErrors(err);
             console.error(err);
             res.render('login',{data:{username:req.body.username},errors})

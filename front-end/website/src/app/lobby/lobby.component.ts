@@ -20,7 +20,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   constructor(private _auth: AuthService, private router: Router, private _user: UserService, private _socket: SocketService) { }
 
-  interval = interval(1000);
+  interval = interval(500);
   subInterval: any;
   routeSub: any;
 
@@ -170,8 +170,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
     
   }
   async startGame() {
-   // if (this.team1.length + this.team2.length == 4)
+   if (this.team1.length + this.team2.length == 4){
     this.router.navigate([`game/${this.game._id}`])
     this._socket.startGame(this.game);
+  }
   }
 }

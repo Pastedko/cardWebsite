@@ -57,7 +57,7 @@ const config:SocketIoConfig={
     MatFormFieldModule,
     BrowserAnimationsModule,
     MatInputModule,
-    MatListModule
+    MatListModule,
   ],
   providers: [AuthService,AuthGuard,IsNotLoggedGuard,UserService,SocketService,GameService,GameSocketService,
   {

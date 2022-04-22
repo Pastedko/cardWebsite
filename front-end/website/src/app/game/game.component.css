@@ -9,6 +9,116 @@
 
 /* card itself
 ********************************************************************/
+
+.speech-bubble1 {
+	position: fixed;
+    width: 100px;
+    height: 50px;
+    top:72%;
+    left:23%;
+	background: #3a91e4;
+	border-radius: .4em;
+}
+.speech-bubble1 p{
+    padding: 15px 0;
+    text-align: center;
+}
+
+
+.speech-bubble2 {
+	position: fixed;
+    width: 100px;
+    height: 50px;
+    top:45%;
+    left:70%;
+	background: #3a91e4;
+	border-radius: .4em;
+}
+.speech-bubble2 p{
+    padding: 15px 0;
+    text-align: center;
+}
+.speech-bubble3 {
+	position: fixed;
+    width: 100px;
+    height: 50px;
+    top:15%;
+    left:23%;
+	background: #3a91e4;
+	border-radius: .4em;
+}
+.speech-bubble3 p{
+    padding: 15px 0;
+    text-align: center;
+}
+.speech-bubble4 {
+	position: fixed;
+    width: 100px;
+    height: 50px;
+    top:35%;
+    left:10%;
+	background: #3a91e4;
+	border-radius: .4em;
+}
+.speech-bubble4 p{
+    padding: 15px 0;
+    text-align: center;
+}
+
+.userPicture{
+    position: fixed;
+    left:30%;
+    top:77%;
+    width:150px;
+    height:150px;
+    border-style: solid;
+    border-width: 2px ;
+}
+
+.player2Picture{
+    position: fixed;
+    left:85%;
+    top:46%;
+    width:150px;
+    height:150px;
+    border-style: solid;
+    border-width: 2px ;
+}
+
+.player3Picture{
+    position: fixed;
+    left:45%;
+    top:10%;
+    width:150px;
+    height:150px;
+    border-style: solid;
+    border-width: 2px ;
+}
+
+.player4Picture{
+    position: fixed;
+    left:8%;
+    top:46%;
+    width:150px;
+    height:150px;
+    border-style: solid;
+    border-width: 2px ;
+}
+.callBtns{
+    position: fixed;
+    left:80%;
+    top: 73%;
+    list-style: none
+}
+.callBtns button{
+    width: 100px;
+}
+.scoreBoard{
+    position: fixed;
+    left:15%;
+    top:10%;
+    font-size: 30px;
+}
 .calls{
     position:fixed;
     bottom: 40%;
@@ -19,8 +129,8 @@
 }
 .playedCards{
     position:fixed;
-    bottom: 60%;
-    left: 50%;
+    bottom: 36%;
+    left: 53%;
     /* bring your own prefixes */
     transform: translate(-50%);
 }
@@ -31,9 +141,10 @@
     background-color: rgb(52, 199, 23) !important;
 }
 .playerCards{
+    align-items: center;
     position:fixed;
     bottom: 0px;
-    left: 50%;
+    left: 43%;
     /* bring your own prefixes */
     transform: translate(-50%);
 }
@@ -49,7 +160,7 @@
     padding: .25em;
     margin: 0 .5em .5em 0;
     text-align: center;
-    font-size: 2.0em; /* @change: adjust this value to make bigger or smaller cards */
+    font-size: 2.5em; /* @change: adjust this value to make bigger or smaller cards */
     font-weight: normal;
     font-family: Arial, sans-serif;
     position: relative;
@@ -516,32 +627,32 @@
     bottom: 0;
 }
 .playingCards ul.hand li:nth-child(1)  { left: 0; }
-.playingCards ul.hand li:nth-child(2)  { left: 1.1em; }
-.playingCards ul.hand li:nth-child(3)  { left: 2.2em; }
-.playingCards ul.hand li:nth-child(4)  { left: 3.3em; }
-.playingCards ul.hand li:nth-child(5)  { left: 4.4em; }
-.playingCards ul.hand li:nth-child(6)  { left: 5.5em; }
-.playingCards ul.hand li:nth-child(7)  { left: 6.6em; }
-.playingCards ul.hand li:nth-child(8)  { left: 7.7em; }
-.playingCards ul.hand li:nth-child(9)  { left: 8.8em; }
-.playingCards ul.hand li:nth-child(10) { left: 9.9em; }
-.playingCards ul.hand li:nth-child(11) { left: 11em; }
-.playingCards ul.hand li:nth-child(12) { left: 12.1em; }
-.playingCards ul.hand li:nth-child(13) { left: 13.2em; }
+.playingCards ul.hand li:nth-child(2)  { left: 3.0em; }
+.playingCards ul.hand li:nth-child(3)  { left: 6.0em; }
+.playingCards ul.hand li:nth-child(4)  { left: 9.0em; }
+.playingCards ul.hand li:nth-child(5)  { left: 12.0em; }
+.playingCards ul.hand li:nth-child(6)  { left: 15.0em; }
+.playingCards ul.hand li:nth-child(7)  { left: 18.0em; }
+.playingCards ul.hand li:nth-child(8)  { left: 21.0em; }
+.playingCards ul.hand li:nth-child(9)  { left: 24.0em; }
+.playingCards ul.hand li:nth-child(10) { left: 27.0em; }
+.playingCards ul.hand li:nth-child(11) { left: 30em; }
+.playingCards ul.hand li:nth-child(12) { left: 33.0em; }
+.playingCards ul.hand li:nth-child(13) { left: 36.0em; }
 
-.playingCards ul.hand li:nth-child(14) { left: 14.3em; }
-.playingCards ul.hand li:nth-child(15) { left: 15.4em; }
-.playingCards ul.hand li:nth-child(16) { left: 16.5em; }
-.playingCards ul.hand li:nth-child(17) { left: 17.6em; }
-.playingCards ul.hand li:nth-child(18) { left: 18.7em; }
-.playingCards ul.hand li:nth-child(19) { left: 19.8em; }
-.playingCards ul.hand li:nth-child(20) { left: 20.9em; }
-.playingCards ul.hand li:nth-child(21) { left: 22em; }
-.playingCards ul.hand li:nth-child(22) { left: 23.1em; }
-.playingCards ul.hand li:nth-child(23) { left: 24.2em; }
-.playingCards ul.hand li:nth-child(24) { left: 25.3em; }
-.playingCards ul.hand li:nth-child(25) { left: 26.4em; }
-.playingCards ul.hand li:nth-child(26) { left: 27.5em; }
+.playingCards ul.hand li:nth-child(14) { left: 39.0em; }
+.playingCards ul.hand li:nth-child(15) { left: 42.0em; }
+.playingCards ul.hand li:nth-child(16) { left: 45.0em; }
+.playingCards ul.hand li:nth-child(17) { left: 48.0em; }
+.playingCards ul.hand li:nth-child(18) { left: 51.0em; }
+.playingCards ul.hand li:nth-child(19) { left: 54.0em; }
+.playingCards ul.hand li:nth-child(20) { left: 57.0em; }
+.playingCards ul.hand li:nth-child(21) { left: 60em; }
+.playingCards ul.hand li:nth-child(22) { left: 63.0em; }
+.playingCards ul.hand li:nth-child(23) { left: 66.0em; }
+.playingCards ul.hand li:nth-child(24) { left: 69.0em; }
+.playingCards ul.hand li:nth-child(25) { left: 72.0em; }
+.playingCards ul.hand li:nth-child(26) { left: 75.0em; }
 
 /* rotate cards if rotateHand option is on */
 .playingCards.rotateHand ul.hand li:nth-child(1) {

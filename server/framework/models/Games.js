@@ -5,7 +5,7 @@ const gamesSchema=new Schema({
     active:{type:Boolean,required:true},
     score:{type:[Number],default:[0,0]},
     handScore:{type:[Number],default:[0,0]},
-    announces:{type:Object,default:{1:[],2:[]}},
+    premiums:{type:Object,default:{1:[],2:[]}},
     contract:{type:Number,default:-1},
     teamCalled:{type:Number,default:0},
     password:{type:String},
@@ -13,7 +13,8 @@ const gamesSchema=new Schema({
     startingPlayer:{},
     lastStarted:{type:Number,default:3},
     playedCards:{type:Array,default:[]},
-    passCount:{type:Number,default:0}
+    passCount:{type:Number,default:0},
+    deck:{type:[],default:[]}
 })
 
 const Game=model('Game',gamesSchema);

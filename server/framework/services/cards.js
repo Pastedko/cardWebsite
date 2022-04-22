@@ -9,11 +9,11 @@ const jwt = require('jsonwebtoken');
 const jwt_decode = require("jwt-decode");
 const { default: mongoose, Types, ObjectId } = require('mongoose');
 const socket  = require('../socket/socket');
-const { findGameById } = require("../services/game")
 
-let faces = ["7", "8", "9", "10", "J", "Q", "K", "A"];
+let faces = ["7", "8", "9", "J", "Q", "K","10", "A"];
 let facePowers = [1,3, 5, 7, 9, 11, 13, 15];
 let points=[0,0,0,10,2,3,4,11];
+let cardOrder=[0,1,2,4,5,6,3,7]
 let suits = ["♠", "♣", "♥", "♦"];
 let names = ["spades", "clubs", "hearts", "diams"];
 let suitPowers = [1, 1, 1, 1];
@@ -27,7 +27,9 @@ class Card {
     suitPower;
     points;
     team;
-    constructor(face, suit, player, name, facePower, suitPower, points,team) {
+    cardOrder;
+    belot;
+    constructor(face, suit, player, name, facePower, suitPower, points,team,cardOrder) {
         this.face = face;
         this.suit = suit;
         this.player = player;
@@ -35,13 +37,18 @@ class Card {
         this.facePower = facePower;
         this.suitPower = suitPower;
         this.points=points;
-        this.team=team
+        this.team=team;
+        this.cardOrder=cardOrder
+        this.belot=false;
     }
 
 }
 
 async function gameStart(game) {
     let myGame = await Game.findById(game._id);
+    myGame.handScore=[0,0];
+    myGame.contract=-1;
+    myGame.teamCalled=0;
     if(myGame.score[0]==0&&myGame.score[1]==0){
 
     myGame.players[0].push(true);
@@ -73,22 +80,28 @@ else{
     }
 }
     let filter={_id:myGame._id}
-    let updates={players:myGame.players,startingPlayer:myGame.startingPlayer,lastStarted:myGame.lastStarted}
+    let updates={players:myGame.players,startingPlayer:myGame.startingPlayer,lastStarted:myGame.lastStarted,handScore:[0,0],contract:-1,teamCalled:0}
     await Game.findByIdAndUpdate(filter,updates);
 }
-function dealCards() {
+async function dealCards(game) {
+    let myGame = await Game.findById(game._id);
     let deck = [];
 
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 8; j++) {
-            card = new Card(faces[j], suits[i], "", names[i], facePowers[j], suitPowers[i],points[j],0);
+            card = new Card(faces[j], suits[i], "", names[i], facePowers[j], suitPowers[i],points[j],0,cardOrder[j]);
             deck.push(card);
         }
     }
-    let shuffled = shuffle(deck);
-    shuffled = shuffle(shuffled);
-    shuffled = shuffle(shuffled);
-    shuffled = shuffle(shuffled);
+   let shuffled=deck
+  //  let shuffled = shuffle(deck);
+   // shuffled = shuffle(shuffled);
+   // shuffled = shuffle(shuffled);
+   // shuffled = shuffle(shuffled);
+    
+    myGame.deck=shuffled;
+    myGame.markModified("deck");
+    myGame.save();
     return shuffled;
 
 }
@@ -112,10 +125,25 @@ async function playCard(card,hand, game) {
     myGame.markModified("playedCards")
     await myGame.save()
     if(currentHand.length==4&&hand.length==1){
+        if(card.belot==true){
+            callBelot(card.team,game);
+            return "belot gameEnded"
+        }
         console.log("ama alo")
         return "gameEnded"
     }
+    if(card.belot==true){
+        callBelot(card.team,game);
+        return "belot"
+    }
     return 1
+}
+async function callBelot(team,game){
+    let myGame = await Game.findById(game._id);
+    myGame.premiums[team].push(-1);
+    let filter={_id:myGame._id}
+    let updates={premiums:myGame.premiums}
+    Game.findByIdAndUpdate(filter,updates)
 }
 function findCard(card,hand){
     let result=false;
@@ -273,14 +301,14 @@ async function handWinner(game){
         })
         return hand[0];
     }
-    else if(contract==5){
+    else if(contract==4){
         hand=hand.sort((a,b)=>{
             if(b.suitPower>a.suitPower)return 1;
             else return b.facePower-a.facePower
         })
         return hand[0];
     }
-    else if(contract==4){
+    else if(contract==3){
         hand.forEach(el=>{
             if(el.name=="spades"){el.suitPower=3}
         })
@@ -290,7 +318,7 @@ async function handWinner(game){
         })
         return hand[0];
     }
-    else if(contract==3){
+    else if(contract==2){
         hand.forEach(el=>{
             if(el.name=="hearts"){el.suitPower=3}
         })
@@ -300,7 +328,7 @@ async function handWinner(game){
         })
         return hand[0];
     }
-    else if(contract==2){
+    else if(contract==1){
         hand.forEach(el=>{
             if(el.name=="diams"){el.suitPower=3}
         })
@@ -310,7 +338,7 @@ async function handWinner(game){
         })
         return hand[0];
     }
-    else if(contract==1){
+    else if(contract==0){
         hand.forEach(el=>{
             if(el.name=="clubs"){el.suitPower=3}
         })
@@ -371,7 +399,7 @@ async function gameEnd(game){
         myGame.score[0]+=team2Points+team1Points;
     }
     let filter={_id:game._id};
-    let changes={points:[myGame.score[0],myGame.score[1]],handScore:[0,0]}
+    let changes={score:[myGame.score[0],myGame.score[1]],handScore:[0,0]}
     console.log()
     console.log(myGame.score)
     Game.findByIdAndUpdate(filter,changes)
@@ -414,11 +442,126 @@ async function allowedCards(hand,game){
         }
         else return hand;
     }
-    else{
-        //igra na cvqt
-        console.log("rip")
+    else if(contract==3){
+        let sameColor=[];
+        hand.forEach(el=>{
+            if(el.suit==currentHand[0].suit)sameColor.push(el);
+        })
+        if(sameColor.length!=0){
+            return sameColor;
+        }
+        else{ 
+            let winner=await handWinner(game)
+            if(winner.team==hand[0].team){
+                return hand;
+            }
+            else {
+                let allowed=[];
+                hand.forEach(el=>{
+                    if(el.name=="spades")allowed.push(el);
+                })
+                if(allowed!=0){
+                    return allowed
+                }
+                else return hand;
+            }
+        }
+    }
+    else if(contract==2){
+        let sameColor=[];
+        hand.forEach(el=>{
+            if(el.suit==currentHand[0].suit)sameColor.push(el);
+        })
+        if(sameColor.length!=0){
+            return sameColor;
+        }
+        else{ 
+            let winner=await handWinner(game)
+            if(winner.team==hand[0].team){
+                return hand;
+            }
+            else {
+                let allowed=[];
+                hand.forEach(el=>{
+                    if(el.name=="hearts")allowed.push(el);
+                })
+                if(allowed!=0){
+                    return allowed
+                }
+                else return hand;
+            }
+        }
+    }
+    else if(contract==1){
+        let sameColor=[];
+        hand.forEach(el=>{
+            if(el.suit==currentHand[0].suit)sameColor.push(el);
+        })
+        if(sameColor.length!=0){
+            return sameColor;
+        }
+        else{ 
+            let winner=await handWinner(game)
+            if(winner.team==hand[0].team){
+                return hand;
+            }
+            else {
+                let allowed=[];
+                hand.forEach(el=>{
+                    if(el.name=="diams")allowed.push(el);
+                })
+                if(allowed!=0){
+                    return allowed
+                }
+                else return hand;
+            }
+        }
+        
+    }else if(contract==0){
+        let sameColor=[];
+        hand.forEach(el=>{
+            if(el.suit==currentHand[0].suit)sameColor.push(el);
+        })
+        if(sameColor.length!=0){
+            return sameColor;
+        }
+        else{ 
+            let winner=await handWinner(game)
+            if(winner.team==hand[0].team){
+                return hand;
+            }
+            else {
+                let allowed=[];
+                hand.forEach(el=>{
+                    if(el.name=="clubs")allowed.push(el);
+                })
+                if(allowed!=0){
+                    return allowed
+                }
+                else return hand;
+            }
+        }
     }
     
+}
+
+async function callPremium(highestCard,call,game){
+    let myGame = await Game.findById(game._id);
+    console.log(call);
+    myGame.premiums[highestCard.team].push([call,highestCard]);
+    console.log(myGame.premiums);
+    let filter={_id:myGame._id}
+    let updates={premiums:myGame.premiums}
+    await Game.findByIdAndUpdate(filter,updates);
+    return call;
+}
+
+async function checkPremium(highestCard,call,game){
+    let myGame = await Game.findById(game._id);
+    myGame.premiums[3-highestCard.team].forEach(el=>{
+        if(el[0]>call)return false;
+    })
+    return true;
 }
 module.exports = {
     dealCards,
@@ -428,5 +571,7 @@ module.exports = {
     makeCall,
     allowedCards,
     findCard,
-    gameEnd
+    gameEnd,
+    callPremium,
+    checkPremium
 }

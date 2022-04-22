@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
+import { Game } from '../game';
+import { Card } from '../game/card';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -18,6 +20,8 @@ export class GameSocketService {
   public gameStarted:boolean=false;
   public isPlayed:boolean=true;
   public hasEnded:boolean=false;
+  public premium:any=-1;
+  public belot:any=false;
 
   dealCards(){
     this.socket.on("dealCards",async(cards:any[])=>{
@@ -77,4 +81,22 @@ export class GameSocketService {
     this.socket.emit("gameStarted",game);
   }
 
+  callPremium(call:any,card:any,game:any){
+    this.socket.emit("premiumCalled",{call:call,card:card,game:game});
+  }
+
+  premiumCalled(){
+    this.socket.on("premiumCalled",(call:any)=>{
+      this.premium=call;
+    })
+  }
+  belotCalled(){
+    this.socket.on("belot",(card:Card)=>{
+      this.belot=card;
+    })
+  }
+  reconnect(game:any){
+    this.socket.emit("reconnect",game);
+
+  }
 }
