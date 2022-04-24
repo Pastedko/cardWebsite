@@ -49,7 +49,8 @@ async function gameStart(game) {
     myGame.handScore=[0,0];
     myGame.contract=-1;
     myGame.teamCalled=0;
-    if(myGame.score[0]==0&&myGame.score[1]==0){
+    console.log(1)
+    if(myGame.score[0]==0&&myGame.score[1]==0&&myGame.passCount==0){
 
     myGame.players[0].push(true);
     for (let i = 1; i < myGame.players.length; i++) {
@@ -62,7 +63,10 @@ async function gameStart(game) {
     myGame.lastStarted=0;
 }
 else{
-
+    myGame.passCount=0;
+    let filter={_id:game._id}
+    let updates={passCount:myGame.passCount}
+   await Game.findOneAndUpdate(filter,updates);
     switch(myGame.lastStarted){
         case 0:{myGame.startingPlayer = myGame.players[2];break}
         case 1:{myGame.startingPlayer = myGame.players[3];break}
@@ -93,15 +97,15 @@ async function dealCards(game) {
             deck.push(card);
         }
     }
-   let shuffled=deck
-  //  let shuffled = shuffle(deck);
-   // shuffled = shuffle(shuffled);
-   // shuffled = shuffle(shuffled);
-   // shuffled = shuffle(shuffled);
+   //let shuffled=deck
+    let shuffled = shuffle(deck);
+    shuffled = shuffle(shuffled);
+    shuffled = shuffle(shuffled);
+    shuffled = shuffle(shuffled);
     
     myGame.deck=shuffled;
-    myGame.markModified("deck");
-    myGame.save();
+   // myGame.markModified("deck");
+   // myGame.save();
     return shuffled;
 
 }
@@ -129,7 +133,6 @@ async function playCard(card,hand, game) {
             callBelot(card.team,game);
             return "belot gameEnded"
         }
-        console.log("ama alo")
         return "gameEnded"
     }
     if(card.belot==true){
@@ -143,7 +146,9 @@ async function callBelot(team,game){
     myGame.premiums[team].push(-1);
     let filter={_id:myGame._id}
     let updates={premiums:myGame.premiums}
-    Game.findByIdAndUpdate(filter,updates)
+    myGame.markModified("premiums");
+    await myGame.save();
+    //await Game.findOneAndUpdate(filter,updates)
 }
 function findCard(card,hand){
     let result=false;
@@ -262,22 +267,26 @@ async function makeCall(call,team, game) {
         myGame.teamCalled=team;
         myGame.contract = call;
         myGame.passCount = 0;
+        let filter={_id:game._id}
+        let updates={passCount:myGame.passCount,contract:myGame.contract,teamCalled:myGame.teamCalled}
+        await Game.findOneAndUpdate(filter,updates);
     }
     else {
         myGame.passCount++;
+        let filter={_id:game._id}
+        let updates={passCount:myGame.passCount}
+        await Game.findOneAndUpdate(filter,updates);
     }
-    myGame.markModified("contract");
-    myGame.save();
     if ((myGame.passCount == 3 && myGame.contract != -1)) {
         beginHand(game);
+        myGame.passCount=0;
+        let filter={_id:game._id}
+        let updates={passCount:myGame.passCount}
+        await Game.findOneAndUpdate(filter,updates);
         return "gameStart"
     }
     else if(myGame.passCount==4){
-        let newFirst=myGame.players[await getPlayerIndex(myGame.startingPlayer,game)];
-        myGame.passCount=0;
-        myGame.markModified("passCount");
-        myGame.save();
-        setFirstPlayer(newFirst,game);
+       //????? let newFirst=myGame.players[await getPlayerIndex(myGame.startingPlayer,game)];
         return "newCalls"
     }
     else {
@@ -355,8 +364,12 @@ async function gameEnd(game){
     //recalculate point additions etc!
     let myGame = await Game.findById(game._id);
     let caller=myGame.teamCalled;
+    let contract=myGame.contract
     let team1Points=myGame.handScore[0];
     let team2Points=myGame.handScore[1];
+    if(contract==5){
+        
+    }
     if(team1Points>team2Points&&caller==1){
         if(team2Points==0){
             myGame.score[0]+=team1Points+9;
@@ -400,9 +413,7 @@ async function gameEnd(game){
     }
     let filter={_id:game._id};
     let changes={score:[myGame.score[0],myGame.score[1]],handScore:[0,0]}
-    console.log()
-    console.log(myGame.score)
-    Game.findByIdAndUpdate(filter,changes)
+    Game.findOneAndUpdate(filter,changes)
 }
 
 async function allowedCards(hand,game){
@@ -547,9 +558,7 @@ async function allowedCards(hand,game){
 
 async function callPremium(highestCard,call,game){
     let myGame = await Game.findById(game._id);
-    console.log(call);
     myGame.premiums[highestCard.team].push([call,highestCard]);
-    console.log(myGame.premiums);
     let filter={_id:myGame._id}
     let updates={premiums:myGame.premiums}
     await Game.findByIdAndUpdate(filter,updates);

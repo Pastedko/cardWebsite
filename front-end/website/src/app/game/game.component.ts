@@ -63,10 +63,16 @@ export class GameComponent implements OnInit {
     { 
       //cards dealt
       if (this._socketGame.deck.length != 0) {
+        this.highestCall=-1;
+        this.hand=[];
+        this.deck=[];
          this.deck = this._socketGame.deck; 
          this.dealCards();
          this.sortHand();
          this._socketGame.deck = []; 
+         this.game = await this.getGame();
+         await this.isMyTurn();
+         await this.getPlayerPositions();
         } 
 
       //card played
@@ -102,6 +108,7 @@ export class GameComponent implements OnInit {
 
       //gameStarted
       if(this._socketGame.gameStarted==true){
+        
         this.dealCards();
         this.rankCards();
         //this.sortHand();
@@ -130,7 +137,6 @@ export class GameComponent implements OnInit {
         //show after game message
         this._socketGame.hasEnded=false;
         this.notInGame=true;
-        this.deck=[];
         this._socketGame.deck=[];
         console.log(this.hand);
         this._socketGame.startNewGame(this.game);

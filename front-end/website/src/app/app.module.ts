@@ -8,8 +8,6 @@ import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import {CookieService} from 'ngx-cookie-service';
-import { AuthGuard } from './guards/auth.guard';
 import { IsNotLoggedGuard } from './guards/is-not-logged.guard';
 import { TokenInterceptorService } from './services/token-interceptor.service';
 import { CreateComponent } from './create/create.component';
@@ -28,6 +26,9 @@ import { GameService } from './services/game.service';
 import { GameSocketService } from './services/game-socket.service';
 import { CallsPopupComponent } from './calls-popup/calls-popup.component';
 import {MatListModule} from '@angular/material/list';
+import { ProfileComponent } from './profile/profile.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { DatePipe } from '@angular/common';
 
 const config:SocketIoConfig={
   url:environment.socketUrl,
@@ -45,7 +46,9 @@ const config:SocketIoConfig={
     LobbyComponent,
     PasswordForLobbyComponent,
     GameComponent,
-    CallsPopupComponent
+    CallsPopupComponent,
+    ProfileComponent,
+    EditProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -57,9 +60,9 @@ const config:SocketIoConfig={
     MatFormFieldModule,
     BrowserAnimationsModule,
     MatInputModule,
-    MatListModule,
+    MatListModule
   ],
-  providers: [AuthService,AuthGuard,IsNotLoggedGuard,UserService,SocketService,GameService,GameSocketService,
+  providers: [AuthService,IsNotLoggedGuard,UserService,SocketService,GameService,GameSocketService,
   {
     provide:HTTP_INTERCEPTORS,
     useClass:TokenInterceptorService,

@@ -1,20 +1,15 @@
 const Game = require('../models/Games');
-const { Router } = require('express');
-const { Cookie } = require('express-session');
-const { isUser, isGuest } = require('../middleware/guard');
+
 const { register, getUserById } = require('../services/user');
-const { login } = require('../services/user');
-const mapErrors = require('../util/mappers');
 const jwt = require('jsonwebtoken');
 const jwt_decode = require("jwt-decode");
 const { default: mongoose, Types, ObjectId } = require('mongoose');
-//const io=require('../index');
 const {sendMessage}=require('../socket/socket');
 
 
 async function createLobby(lobby) {
     let decoded = jwt_decode(lobby.players[0]);
-    let player
+    let player;
     if (typeof decoded.subject == "number") player = decoded.subject;
     else player = await getUserById(decoded.subject)
     const game = new Game({

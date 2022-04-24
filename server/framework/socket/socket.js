@@ -90,11 +90,14 @@ exports.socketConnection = (server) => {
             console.log("callMade")
             let call = input.call;
             let team = input.team
-            console.log(call);
             let game = input.game;
             let result = await makeCall(call, team, game);
             if (result == "gameStart") {
                 io.to(String(game._id)).emit("startGame");
+            }
+            else if(result=="newCalls"){
+                console.log("newCalls")
+                socket.emit("gameEnded")
             }
             io.to(String(game._id)).emit("callMade", call);
         })

@@ -51,7 +51,6 @@ router.get('/getUser/:id',async(req,res)=>{
     try{
         let decoded=jwt_decode(req.params.id)
         user=await getUserById(decoded.subject)
-        console.log(user)
         res.status(200).send(user);
     }
     catch(err){

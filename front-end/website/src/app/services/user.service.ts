@@ -18,6 +18,10 @@ export class UserService {
   private _getGuestUrl="http://localhost:3000/getGuest/";
   private _leaveGameUrl="http://localhost:3000/leaveGame/";
   private _changeTeamUrl="http://localhost:3000/change/";
+  private _updateProfile="http://localhost:3000/updateWithPicture";
+  private _updateProfile2="http://localhost:3000/updateWithoutPicture";
+  private _getPicure="http://localhost:3000/getPicture";
+  private _removePicture="http://localhost:3000/removePicture"
 
   createLobby(lobby:Object){
     return this.http.post<any>(this._createUrl,lobby,{
@@ -50,5 +54,19 @@ export class UserService {
   }
   changeTeam(user:any,game:any){
     return this.http.post<any>(`${this._changeTeamUrl}${game}`,user)
+  }
+  updateProfile(information:any){
+    //console.log(updates)
+    return this.http.post<any>(`${this._updateProfile}`,information);
+  }
+  updateProfile2(information:any){
+    console.log(information.get("username"))
+    return this.http.post<any>(`${this._updateProfile2}`,information);
+  }
+  getPicture(user:any){
+    return this.http.post<any>(this._getPicure,{user:user});
+  }
+  removePicture(user:any){
+    return this.http.post<any>(`${this._removePicture}`,{user:user})
   }
 }

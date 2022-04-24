@@ -19,7 +19,6 @@ router.get("/dealCards/:id",async()=>{
 
 router.post("/allowed",async(req,res)=>{
     
-    console.log(req.body);
     let hand=req.body.hand;
     let game=req.body.game;
     let card=req.body.card
