@@ -20,7 +20,7 @@ export class RegisterComponent implements OnInit {
     console.log(this.registerUserData)
     this._auth.registerUser(this.registerUserData).subscribe(
       res=>{localStorage.clear();localStorage.setItem('token',res.token);this.router.navigate(['/']);},
-      err=>console.log(err)
+      err=>alert(err.error)
     )
   }
   ngOnInit(): void {

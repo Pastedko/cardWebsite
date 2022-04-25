@@ -81,13 +81,13 @@ export class EditProfileComponent implements OnInit {
     fd.set('profilePicture',this.selectedFile);
     this._user.updateProfile(fd).subscribe(
     res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
-    err=>{console.log(err.error)});
+    err=>{alert(err.error)});
     }
     else {
       fd.set("profilePicture",this.updates.profilePicture)
       this._user.updateProfile2(fd).subscribe(
       res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
-      err=>{console.log(err.error)});
+      err=>{alert(err.error)});
 
       if(this.removed==true){
         this._user.removePicture(this.user);

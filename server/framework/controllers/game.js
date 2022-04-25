@@ -1,7 +1,7 @@
 const {Router}=require('express');
 const { Cookie } = require('express-session');
 const { isUser,isGuest } = require('../middleware/guard');
-const { register, getUserById } = require('../services/user');
+const { register, getUserById,saveGameInMatchHistory } = require('../services/user');
 const {login}=require('../services/user');
 const mapErrors = require('../util/mappers');
 const jwt=require('jsonwebtoken');
@@ -40,7 +40,14 @@ router.post("/premium",async(req,res)=>{
     res.status(200).send(result)
 })
 
+router.post("/gameFinished",async(req,res)=>{
+    console.log("hello")
+    let game=req.body.game;
+    let user=req.body.user;
+    await saveGameInMatchHistory(user,game);
+    res.status(200);
 
+})
 
 
 module.exports=router;

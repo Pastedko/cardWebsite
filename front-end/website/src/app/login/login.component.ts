@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     console.log(this.loginUserData)
     this._auth.loginUser(this.loginUserData).subscribe(
       res=>{localStorage.clear();localStorage.setItem('token',res.token);this.router.navigate(['/']);},
-      err=>console.log(err.error)
+      err=>alert(err.error)
     )
   }
 

@@ -70,15 +70,23 @@ exports.socketConnection = (server) => {
                
             }
             if (result2 == "gameEnded") {
-                console.log("gameEnded")
-                socket.emit("gameEnded")
-                gameEnd(game);
+                console.log("gameEnded");
+                socket.emit("gameEnded");
+                let myGame=await gameEnd(game);
+                io.to(String(game._id)).emit("showResult",myGame.result);
+                if(myGame.finished==true){
+                    setTimeout(() => {  io.to(String(game._id)).emit("gameFinished") }, 3000);
+                }
             }
             else if(result2=="belot gameEnded"){
                 io.to(String(game._id)).emit("belot",card)
                 console.log("belot")
                 socket.emit("gameEnded")
-                gameEnd(game);
+                let myGame=await gameEnd(game);
+                io.to(String(game._id)).emit("showResult",myGame.result);
+                if(myGame.finished==true){
+                    setTimeout(() => {  io.to(String(game._id)).emit("gameFinished") }, 3000);
+                }
             }
             else if(result2=="belot"){
                 io.to(String(game._id)).emit("belot",card)

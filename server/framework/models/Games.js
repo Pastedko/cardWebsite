@@ -12,9 +12,11 @@ const gamesSchema=new Schema({
     name:{type:String},
     startingPlayer:{},
     lastStarted:{type:Number,default:3},
+    lastHandWinner:{type:Number,default:-1},
     playedCards:{type:Array,default:[]},
     passCount:{type:Number,default:0},
-    deck:{type:[],default:[]}
+    deck:{type:[],default:[]},
+    exists:{type:Boolean,default:true}
 })
 
 const Game=model('Game',gamesSchema);

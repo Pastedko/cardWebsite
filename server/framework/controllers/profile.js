@@ -37,7 +37,7 @@ router.post("/updateWithPicture",upload.single('profilePicture'),async(req,res)=
 router.post("/updateWithoutPicture",upload.fields([]),async(req,res)=>{
     let user=req.body.user;
     let changes=req.body;
-    let file=null
+    let file=req.body.profilePicture
     // console.log(changes);
     try{
         await updateProfile(user,changes,file);

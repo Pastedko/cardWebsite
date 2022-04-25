@@ -119,8 +119,8 @@ async function leaveGame(user, game) {
     // }
     
     if (lobby.players.length == 1) {
-
-        await Game.findByIdAndDelete(lobby._id);
+        this.lobby.exists=false;
+        await lobby.save();
     }
     else {
         let result = user;

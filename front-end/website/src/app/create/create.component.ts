@@ -34,7 +34,7 @@ export class CreateComponent implements OnInit {
     lobby.players.push(player1)
     this._user.createLobby(lobby).subscribe(
       res=>{this.router.navigate([`/lobby/${res._id}`]);this._socket.createGame(res._id);},
-      err=>console.log(err.error)
+      err=>alert(err.error)
     );
   }
 }

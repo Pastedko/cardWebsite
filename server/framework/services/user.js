@@ -37,6 +37,8 @@ async function login(email, password) {
 //TODO change identifier
 
 async function updateProfile(user, updates, file) {
+    console.log("hi")
+    console.log(file)
     const myUser = await User.findById(user);
     if (myUser) {
         const existing2 = await getUserByUsername(updates.username);
@@ -45,12 +47,15 @@ async function updateProfile(user, updates, file) {
                 throw new Error('Username is already in use')
         }
         myUser.username = updates.username;
-        if (file != null) {
+        console.log(file)
             if (myUser.profilePicture != 'http://localhost:3000/uploads/guest-user-250x250.jpg') {
-                var result = findRemoveSync('uploads', { files: myUser.profilePicture.split('uploads\\')[1] })
+                //var result = findRemoveSync('uploads', { files: myUser.profilePicture.split('uploads\\')[1] })
             }
+            if(file.includes("http://localhost:3000")){
+                myUser.profilePicture=file;
+            }
+            else
             myUser.profilePicture = 'http://localhost:3000/' + file;
-        }
         myUser.gender = updates.gender;
         myUser.birthday = updates.birthday | null;
         myUser.city = updates.city;
@@ -87,11 +92,19 @@ async function getUserGames(user) {
     let games = myUser.allGames;
     return games;
 }
+
+async function saveGameInMatchHistory(user,game){
+    let myUser=await User.findById(user._id);
+    console.log(myUser)
+    myUser.allGames.push(game._id);
+    await myUser.save();
+}
 module.exports = {
     login,
     register,
     getUserById,
     getUserGames,
     updateProfile,
-    removePicure
+    removePicure,
+    saveGameInMatchHistory
 }
