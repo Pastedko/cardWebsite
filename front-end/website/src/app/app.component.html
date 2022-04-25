@@ -10,61 +10,10 @@
 	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<title>Carder</title>
 </head>
-<body scroll="no" style="overflow: hidden">
-<nav class="[ navbar navbar-fixed-top ][ navbar-bootsnipp animate ]" role="navigation">
-    	<div class="[ container ]">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="[ navbar-header ]">
-				<button type="button" class="[ navbar-toggle ]" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="[ sr-only ]">Toggle navigation</span>
-					<span class="[ icon-bar ]"></span>
-					<span class="[ icon-bar ]"></span>
-					<span class="[ icon-bar ]"></span>
-				</button>
-				<div class="[ animbrand ]">
-					<a class="[ navbar-brand ][ animate ]" href="/">Carder</a>
-				</div>
-			</div>
-
-			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="[ collapse navbar-collapse ]" id="bs-example-navbar-collapse-1">
-				<ul class="[ nav navbar-nav navbar-right ]">
-					<li class="[ visible-xs ]">
-						<form action="http://bootsnipp.com/search" method="GET" role="search">
-							<div class="[ input-group ]">
-								<input type="text" class="[ form-control ]" name="q" placeholder="Search for snippets">
-								<span class="[ input-group-btn ]">
-									<button class="[ btn btn-primary ]" type="submit"><span class="[ glyphicon glyphicon-search ]"></span></button>
-									<button class="[ btn btn-danger ]" type="reset"><span class="[ glyphicon glyphicon-remove ]"></span></button>
-								</span>
-							</div>
-						</form>
-					</li>
-
-					<li><a *ngIf="_authService.isLogged()" href="/profile/12312" class="[ animate ]">Profile</a></li>
-					<li class="[ dropdown ]">
-					</li>
-					<li><a  class="animate" href="/create">Create a lobby</a></li>
-					<li><a *ngIf="!_authService.isLogged()" class="animate" href="/register">Register</a></li>
-					<li><a *ngIf="!_authService.isLogged()" class="animate" href="/login">Login</a></li>
-					<li><a class="animate" *ngIf="_authService.isLogged()" (click)="_authService.logoutUser()" style="cursor: pointer">Logout</a></li>
-                    <li class="[ hidden-xs ]"><a href="#toggle-search" class="[ animate ]"><span class="[ glyphicon glyphicon-search ]"></span></a></li>
-				</ul>
-			</div>
-		</div>
-		<div class="[ bootsnipp-search animate ]">
-			<div class="[ container ]">
-				<form action="http://bootsnipp.com/search" method="GET" role="search">
-					<div class="[ input-group ]">
-						<input type="text" class="[ form-control ]" name="q" placeholder="Search for snippets and hit enter">
-						<span class="[ input-group-btn ]">
-							<button class="[ btn btn-danger ]" type="reset"><span class="[ glyphicon glyphicon-remove ]"></span></button>
-						</span>
-					</div>
-				</form>
-			</div>
-		</div>
-	</nav>
+<body>
+	<div class="game">
+<app-navigation></app-navigation>
 <router-outlet></router-outlet>
+</div>
 </body>
 </html>

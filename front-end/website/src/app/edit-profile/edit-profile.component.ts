@@ -34,6 +34,7 @@ export class EditProfileComponent implements OnInit {
     this.updates.gender=this.user.gender;
     this.updates.user=this.user
     this.updates.birthday = this.pipe.transform(this.updates.birthday, 'yyyy-MM-dd');
+    this.updates.profilePicture=this.user.profilePicture;
     console.log(this.user.birthday)
    // this.getPicture();
       this.url=this.user.profilePicture
@@ -76,13 +77,14 @@ export class EditProfileComponent implements OnInit {
     fd.set("city",this.updates.city);
     fd.set("gender",this.updates.gender);
     fd.set("user",this.user._id);
-    if(this.selectedFile!=null){
+    if(this.selectedFile!=null&&!this.url.includes("http://localhost")){
     fd.set('profilePicture',this.selectedFile);
     this._user.updateProfile(fd).subscribe(
     res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
     err=>{console.log(err.error)});
     }
     else {
+      fd.set("profilePicture",this.updates.profilePicture)
       this._user.updateProfile2(fd).subscribe(
       res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
       err=>{console.log(err.error)});

@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit,OnDestroy {
     this.games=[];
     this._user.getGames().subscribe(
       res=>{res.forEach((el:any)=> {
-        if(el.active==false){
+        if(el.active==false&&el.exists==true){
         this.games.push(el)
         }
       });},

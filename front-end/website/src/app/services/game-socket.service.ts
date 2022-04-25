@@ -22,6 +22,8 @@ export class GameSocketService {
   public hasEnded:boolean=false;
   public premium:any=-1;
   public belot:any=false;
+  public showResults:boolean|Game=false;
+  public gameHasFinished:boolean=false;
 
   dealCards(){
     this.socket.on("dealCards",async(cards:any[])=>{
@@ -97,6 +99,15 @@ export class GameSocketService {
   }
   reconnect(game:any){
     this.socket.emit("reconnect",game);
-
+  }
+  showResult(){
+    this.socket.on("showResult",(game:any)=>{
+      this.showResults=game;
+    })
+  }
+  gameFinished(){
+    this.socket.on("gameFinished",()=>{
+      this.gameHasFinished=true;
+    })
   }
 }

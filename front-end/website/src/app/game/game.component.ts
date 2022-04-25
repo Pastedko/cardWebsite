@@ -27,6 +27,7 @@ export class GameComponent implements OnInit {
   public hand: Card[] = [];
   public deck: Card[] = [];
   public playedCards:Card[]=[];
+  public pfp:string[]=[];
   public turn:boolean=false;
   public notInGame=true;
   public callActive=this.notInGame&&this.turn;
@@ -43,10 +44,16 @@ export class GameComponent implements OnInit {
   public call:number=-1;
   public belot:any=false;
   public positions:any[]=[];
+  public names:string[]=[];
   public callPlayer1:any;
+  public myCalls:string[]|any[]=["Clubs","Diamonds","Hearts","Spades","No trums","All trumps"]
   public premiums:any={0:"Tierce",1:"Quarte",2:"Quint",3:"Sqare"}
   public premiumsCalled:any[]=[];
   public usedCards:Card[]=[];
+  public scoreScreen:any;
+  public hasFinished:boolean=false;
+  public win:boolean=false;
+  public loss:boolean=false;
   subInterval: any;
   routeSub: any;
 
@@ -59,21 +66,31 @@ export class GameComponent implements OnInit {
     this.getTeam();
     this.playerNum = this.getPlayerNum();
     await this.isMyTurn();
+    this.getPlayerPositions();
+  
     this.subInterval = this.interval.subscribe(async () => 
     { 
       //cards dealt
       if (this._socketGame.deck.length != 0) {
-        this.highestCall=-1;
         this.hand=[];
         this.deck=[];
-         this.deck = this._socketGame.deck; 
-         this.dealCards();
-         this.sortHand();
-         this._socketGame.deck = []; 
-         this.game = await this.getGame();
-         await this.isMyTurn();
-         await this.getPlayerPositions();
-        } 
+        this.deck = this._socketGame.deck; 
+        this.dealCards();
+        this.sortHand();
+        this._socketGame.deck = []; 
+        this.game = await this.getGame();
+        if(this.team==2){
+          this.team1Score=this.game.score[1];
+          this.team2Score=this.game.score[0];
+        }
+        else{
+        this.team1Score=this.game.score[0];
+        this.team2Score=this.game.score[1];
+        }
+        await this.isMyTurn();
+        await this.getPlayerPositions();
+       
+      } 
 
       //card played
       if(this._socketGame.playedCard!=null){
@@ -87,7 +104,7 @@ export class GameComponent implements OnInit {
           this._socketGame.playedCard=null;
           this.isMyTurn();
           await this.getPlayerPositions();
-          setTimeout(() => { this.playedCards.splice(0,4);}, 2000);
+          setTimeout(() => { this.playedCards.splice(0,4);}, 1000);
           console.log("alo")
           this._socketGame.handEnded();
         }
@@ -104,6 +121,9 @@ export class GameComponent implements OnInit {
         this.game = await this.getGame();
         await this.isMyTurn();
         await this.getPlayerPositions();
+        if(localStorage.getItem("token")!=null){
+        
+        }
       }
 
       //gameStarted
@@ -128,17 +148,14 @@ export class GameComponent implements OnInit {
 
       //game ended
       if(this._socketGame.hasEnded==true){
-        console.log("game ended")
-        this.game = await this.getGame()
+        this.game = await this.getGame();
         this.isMyTurn();
         await this.getPlayerPositions();
         this.team1Score=this.game.score[0];
         this.team2Score=this.game.score[1];
-        //show after game message
         this._socketGame.hasEnded=false;
         this.notInGame=true;
         this._socketGame.deck=[];
-        console.log(this.hand);
         this._socketGame.startNewGame(this.game);
       }
 
@@ -150,7 +167,6 @@ export class GameComponent implements OnInit {
 
       if(this._socketGame.premium!=-1){
         let index=-1;
-        console.log(this._socketGame.premium)
         let player=this._socketGame.premium.player;
         for(let i=0;i<this.positions.length;i++){
           if(JSON.stringify(player)==JSON.stringify(this.positions[i][0])){
@@ -160,9 +176,8 @@ export class GameComponent implements OnInit {
         if(index!=-1){
           this.premiumsCalled[index]=this.premiums[this._socketGame.premium.call];
         }
-        console.log(this.premiumsCalled);
         this._socketGame.premium=-1;
-        setTimeout(() => { this.premiumsCalled[index]=null;}, 3000);
+        setTimeout(() => { this.premiumsCalled[index]=null;}, 5000);
       }
 
 
@@ -172,28 +187,63 @@ export class GameComponent implements OnInit {
         this.belot=this._socketGame.belot;
         this._socketGame.belot=false;
         let player=this.belot.player;
-        console.log(player)
         let index=-1;
         for(let i=0;i<this.positions.length;i++){
-          console.log(JSON.stringify(player));
-          console.log(JSON.stringify(this.positions[i][0]));
           if(JSON.stringify(player)==JSON.stringify(this.positions[i][0])){
             index=i;
           }
         }
-        console.log(index);
         if(index!=-1){
           this.premiumsCalled[index]="Belot";
         }
         setTimeout(() => { this.premiumsCalled[index]=null;this.belot=false;}, 3000);
       }
+
+      //showResult
+      if(this._socketGame.showResults!=false){
+        console.log("hello")
+        this.scoreScreen=this._socketGame.showResults;
+        console.log(this.scoreScreen);
+        this._socketGame.showResults=false;
+        if(this.team==2){
+          let sub=this.scoreScreen["team1"];
+          this.scoreScreen["team1"]=this.scoreScreen["team2"];
+          this.scoreScreen["team2"]=sub;
+        };
+        this.highestCall=-1;
+        setTimeout(() => { this.scoreScreen=null;}, 3000);
+        this._socketGame.showResult();
+      }
+
+      //gameFinished
+      if(this._socketGame.gameHasFinished!=false){
+        this._socketGame.gameHasFinished=false;
+        this._game.gameFinished(this.game,this.player);
+        this.hasFinished=true;
+        this.game=await this.getGame();
+        if(this.game.score[0]>this.game.score[1]&&this.team==1){
+          this.win=true;
+          //this.results.push("Win");
+        }
+        else if(this.game.score[0]>this.game.score[1]&&this.team==2){
+          this.loss=true;
+         // this.results.push("Loss");
+        }
+        else if(this.game.score[0]<this.game.score[1]&&this.team==1){
+          this.loss=true;
+         // this.results.push("Loss")
+        }
+        else if(this.game.score[0]<this.game.score[1]&&this.team==2){
+          this.win=true;
+         // this.results.push("WIN")
+        }
+       
+      }
     })
 
    
    // await this.reconnect();
-   this.getPlayerPositions();
-    console.log(this.notInGame);
-    console.log(this.turn);
+
   }
 
   start(){
@@ -205,12 +255,13 @@ export class GameComponent implements OnInit {
     this._socketGame.gameEnded();
     this._socketGame.premiumCalled();
     this._socketGame.belotCalled();
+    this._socketGame.showResult();
+    this._socketGame.gameFinished();
   }
 
   rankCards(){
     if(this.highestCall==5){
       this.deck.forEach(el=>{
-        console.log(el);
         if(el.face=="J"){el.facePower=17;el.points=20;}
         else
         if(el.face=="9"){el.facePower=16;el.points=14;}
@@ -218,7 +269,6 @@ export class GameComponent implements OnInit {
     }
     else if(this.highestCall==3){
       this.deck.forEach(el=>{
-        console.log(el);
         if(el.face=="J" && el.name=="spades"){el.facePower=17;el.points=20;el.suitPower=3;}
         else
         if(el.face=="9"&& el.name=="spades"){el.facePower=16;el.points=14;el.suitPower=3;}
@@ -226,7 +276,6 @@ export class GameComponent implements OnInit {
     }
     else if(this.highestCall==2){
       this.deck.forEach(el=>{
-        console.log(el);
         if(el.face=="J" && el.name=="hearts"){el.facePower=17;el.points=20;el.suitPower=3;}
         else
         if(el.face=="9"&& el.name=="hearts"){el.facePower=16;el.points=14;el.suitPower=3;}
@@ -234,7 +283,6 @@ export class GameComponent implements OnInit {
     }
     else if(this.highestCall==1){
       this.deck.forEach(el=>{
-        console.log(el);
         if(el.face=="J" && el.name=="diams"){el.facePower=17;el.points=20;el.suitPower=3;}
         else
         if(el.face=="9"&& el.name=="diams"){el.facePower=16;el.points=14;el.suitPower=3;}
@@ -242,7 +290,6 @@ export class GameComponent implements OnInit {
     }
     else if(this.highestCall==0){
       this.deck.forEach(el=>{
-        console.log(el);
         if(el.face=="J" && el.name=="clubs"){el.facePower=17;el.points=20;el.suitPower=3;}
         else
         if(el.face=="9"&& el.name=="clubs"){el.facePower=16;el.points=14;el.suitPower=3;}
@@ -283,7 +330,6 @@ export class GameComponent implements OnInit {
     return num;
   }
   isMyTurn(){
-    console.log("checked")
     let playerInGame=this.game.players[0];
     this.game.players.forEach((el:any) => {
       if(el[0]==this.player||(el[0].username==this.player.username&&this.player.username!=null)){
@@ -296,11 +342,8 @@ export class GameComponent implements OnInit {
   dealCards() {
     this.playerNum = this.getPlayerNum();
     this.playedCards=[];
-    console.log(this.deck)
     if(this.hand.length==5)
     {
-      console.log(1);
-      console.log(this.hand);
       for (let i =20+ this.playerNum * 3; i <20+ this.playerNum*3 + 3; i++) {
         this.deck[i].player=this.player
         this.deck[i].team=this.team;
@@ -330,12 +373,9 @@ export class GameComponent implements OnInit {
         case "diams":{this.diams.push(this.deck[i]);break;}
         default:console.log("ERROR!");
       }
-    }}
-    
+    }} 
   }
-
    checkBelot(card:Card){
-     console.log(card)
     if(card.face=="Q"){
       let found=this.hand.filter((el:Card)=>{
        return  el.face=="K"&&el.name==card.name
@@ -361,8 +401,9 @@ export class GameComponent implements OnInit {
           card.belot=true;
         }
         this._socketGame.playCard(card,this.hand,this.game);
-    this.hand.splice(index,1)
-    this.cardPassed=true;
+        this.hand.splice(index,1)
+        this.cardPassed=true;
+
     }}
   }
   sortHand(){
@@ -411,7 +452,6 @@ export class GameComponent implements OnInit {
     let diams2;
     let hearts2;
     let spades2;
-    console.log(this.usedCards);
     this.clubs.sort((a,b)=>{
       return a.cardOrder-b.cardOrder
     })
@@ -443,7 +483,6 @@ export class GameComponent implements OnInit {
     if(index==0){
       for(let i=1;i<this.clubs.length-1;i++){
         if(this.clubs[i].cardOrder==this.clubs[i-1].cardOrder+1&&this.clubs[i].cardOrder+1==this.clubs[i+1].cardOrder){
-          console.log(this.clubs[i+1]);
           this.usedCards.push(this.clubs[i]);
           this.usedCards.push(this.clubs[i-1]);
           this.usedCards.push(this.clubs[i+1]);
@@ -557,7 +596,7 @@ export class GameComponent implements OnInit {
       }
       for(let i=1;i<this.spades.length-3;i++){
 
-        if(this.spades[i].cardOrder==this.spades[i-1].cardOrder+1&&this.spades[i].cardOrder+1==this.spades[i+1].cardOrder&&this.hearts[i+1].cardOrder+1==this.hearts[i+2].cardOrder
+        if(this.spades[i].cardOrder==this.spades[i-1].cardOrder+1&&this.spades[i].cardOrder+1==this.spades[i+1].cardOrder&&this.spades[i+1].cardOrder+1==this.spades[i+2].cardOrder
           &&this.spades[i+2].cardOrder+1==this.spades[i+3].cardOrder){
             this.usedCards.push(this.spades[i]);
             this.usedCards.push(this.spades[i-1]);
@@ -578,13 +617,9 @@ export class GameComponent implements OnInit {
         let result=false;
         let card;
         this.spades.forEach(el=>{
-          console.log(el)
-          console.log(this.hearts.filter(elem=>elem.face==el.face))
-          console.log(this.diams.filter(elem=>elem.face==el.face))
-          console.log(this.clubs.filter(elem=>elem.face==el.face))
           if(this.hearts.filter(elem=>elem.face==el.face).length!=0
           &&this.diams.filter(elem=>elem.face==el.face).length!=0
-          &&this.clubs.filter(elem=>elem.face==el.face).length!=0){result=true;card=el;}
+          &&this.clubs.filter(elem=>elem.face==el.face).length!=0&&(el.name!=="7"&&el.name!="8")){result=true;card=el;}
         })
         if(result==false){
           return false
@@ -595,36 +630,77 @@ export class GameComponent implements OnInit {
     return false;
   }
   getPlayerPositions(){
-
     this.positions=[];
     this.positions.push([this.player])
+    if(this.player.profilePicture!=null){
+      this.pfp.push(this.player.profilePicture);
+    }
+    else this.pfp.push("http://localhost:3000/uploads/guest-user-250x250.jpg");
+    if(this.player.username!=undefined){
+      this.names.push(this.player.username);
+    }
+    else {
+      this.names.push("Guest "+this.player);
+    }
     let index=this.playerNum;
     let team=this.team;
     for(let i=1;i<4;i++){
     if (team == 1) {
       this.positions.push(this.game.players[ index+ 2])
       index=index+2;
+      if(this.game.players[index][0].profilePicture!=null){
+        this.pfp.push(this.game.players[index][0].profilePicture);
+      }
+      else this.pfp.push("http://localhost:3000/uploads/guest-user-250x250.jpg")
+      if(this.game.players[index][0].username!=undefined){
+        this.names.push(this.game.players[index][0].username);
+      }
+      else {
+        this.names.push("Guest "+this.game.players[index][0]);
+      }
       team=this.game.players[index][1];
   }
   else {
       if (index == 3) {
         this.positions.push(this.game.players[ index-3])
         index=index-3;
+        if(this.game.players[index][0].profilePicture!=null){
+          this.pfp.push(this.game.players[index][0].profilePicture);
+        }
+        else this.pfp.push("http://localhost:3000/uploads/guest-user-250x250.jpg")
+        if(this.game.players[index][0].username!=undefined){
+          this.names.push(this.game.players[index][0].username);
+        }
+        else {
+          this.names.push("Guest "+this.game.players[index][0]);
+        }
         team=this.game.players[index][1];
       }
       else {
         this.positions.push(this.game.players[ index-1])
         index=index-1;
+        if(this.game.players[index][0].profilePicture!=null){
+          this.pfp.push(this.game.players[index][0].profilePicture);
+        }
+        else this.pfp.push("http://localhost:3000/uploads/guest-user-250x250.jpg")
+        if(this.game.players[index][0].username!=undefined){
+          this.names.push(this.game.players[index][0].username);
+        }
+        else {
+          this.names.push("Guest "+this.game.players[index][0]);
+        }
         team=this.game.players[index][1];
       }
   }
   }
-  console.log(this.positions)
 }
   async reconnect(){
     this.game=await this.getGame();
     this._socketGame.reconnect(this.game);
     this.deck=this.game.deck
   }
-
+  continue(){
+    
+    this.router.navigate(['/']);
+  }
 }

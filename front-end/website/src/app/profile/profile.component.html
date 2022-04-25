@@ -34,7 +34,7 @@
                     <div class="clearfix"></div>
                     <div class="bot-border"></div>
                     <div class="col-sm-5 col-xs-6 tital ">Gender: </div>
-                    <div class="col-sm-7 col-xs-6 ">asfasd{{user.gender}}</div>
+                    <div class="col-sm-7 col-xs-6 ">{{user.gender}}</div>
                     <div class="col-sm-5 col-xs-6 tital ">Wins: </div>
                     <div class="col-sm-7 col-xs-6 ">{{user.wins}}</div>
                     <div class="col-sm-5 col-xs-6 tital ">Losses: </div>
@@ -56,18 +56,18 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div *ngFor="let game of games,index as index" class="row border">
+        <ul class="row">
+            <li *ngFor="let game of games,index as index" class="row border">
                 <div class="col-md-4 car-image-block">
                     <a><img
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Belote-exemple9-9.jpg/800px-Belote-exemple9-9.jpg "></a>
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Belote-exemple9-9.jpg/800px-Belote-exemple9-9.jpg " width="400px" height="300px"></a>
                 </div>
                 <div class="col-md-8 card-body ">
-                    <h3>{{game.name}} - WIN/LOSS  {{game.score[0]}} - {{game.score[1]}}</h3>
+                    <h3>{{game.name}} - {{results[index]}} {{game.score[0]}} - {{game.score[1]}}</h3>
                     <ul >
-                        <li *ngFor="let player of players[index]" class="list-inline-item">Player: {{player}}</li>
+                        <li *ngFor="let player of players[index],index as index" class="list-inline-item">Player{{index+1}}: {{player}}</li>
                     </ul>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ul>
     </div>

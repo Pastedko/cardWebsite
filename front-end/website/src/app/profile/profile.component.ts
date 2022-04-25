@@ -19,11 +19,10 @@ export class ProfileComponent implements OnInit {
   public games:Game[]=[];
   public user:any;
   public players:any[]=[[]];
+  public results:any=[];
   async ngOnInit(): Promise<void> {
     this.user=await this.getUser();
-    console.log(this.user);
     this.games=await this.getGames();
-    console.log(this.games)
     this.getGamePlayers();
 
   }
@@ -42,18 +41,43 @@ export class ProfileComponent implements OnInit {
     return res;
   }
   getGamePlayers(){
+
     this.games.forEach((game:any,index:number)=>{
-      //this.players.push([]);
+      let team=0;
+    game.players.forEach((el:any) => {
+      console.log(JSON.stringify(el[0]))
+      console.log(JSON.stringify(this.user))
+      if(JSON.stringify(el[0]._id)==JSON.stringify(this.user._id)){
+        console.log("hi");team=el[1];}
+    });
+    console.log(this.user)
+    if(game.score[0]>game.score[1]&&team==1){
+      console.log("hi")
+      this.results.push("WIN");
+    }
+    else if(game.score[0]>game.score[1]&&team==2){
+      console.log("hi")
+      this.results.push("LOSS");
+    }
+    else if(game.score[0]<=game.score[1]&&team==1){
+      console.log("hi")
+      this.results.push("LOSS")
+    }
+    else if(game.score[0]<=game.score[1]&&team==2){
+      console.log("hi")
+      this.results.push("WIN")
+    }
+    console.log(this.results)
+      this.players.push([]);
         game.players.forEach((el: any[]) => {
-          console.log(this.players[index]);
-          console.log(el);
             if (typeof el[0] == "number") {console.log(el[0]); this.players[index].push("Guest " + el[0]);}
             else {console.log(el[0]); this.players[index].push(el[0].username);}
+          
+
         });
       },
       (err:any) => { console.log(err) }
     );
-    console.log(this.players)
   }
   editProfile(){
     this.router.navigate([`edit/${localStorage.getItem('token')}`])

@@ -13,6 +13,7 @@ export class GameService {
 
   _checkCardsUrl="http://localhost:3000/allowed";
   _getGamesOfUser="http://localhost:3000/getUserGames"
+  _gameFinished="http://localhost:3000/gameFinished"
   constructor(private http:HttpClient,private router:Router,private socket:Socket) { }
 
   isAllowed(card:any,hand:any[],game:any){
@@ -21,5 +22,9 @@ export class GameService {
   getGamesOfUser(user:User){
     console.log(user);
     return this.http.post<any>(this._getGamesOfUser,{user:user});
+  }
+  gameFinished(game:any|Game,user:any|User){
+    console.log("hello")
+    return this.http.post<any>(this._gameFinished,{game:game,user:user});
   }
 }

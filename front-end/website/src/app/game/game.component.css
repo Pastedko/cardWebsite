@@ -9,6 +9,37 @@
 
 /* card itself
 ********************************************************************/
+.gameEnded button{
+    position: fixed;
+    left:45%;
+    top:50%;
+    width: 200px;
+    height: 100px;
+    color: rgb(17, 235, 180);
+}
+.gameEnded img{
+    display: block;
+    width:80%;
+    height: 80%;
+    object-fit: cover;
+}
+.afterGame table{
+    position: fixed;
+    top:40%;
+    left:41%;
+    width:300px;
+    height: 200px;
+    background-color: rgb(38, 148, 221);
+    color:white;
+    border: solid;
+}
+.afterGame table,th,td{
+    border: 1px solid;
+    text-align: center;
+}
+.afterGame td{
+    height: 30px;
+}
 
 .speech-bubble1 {
 	position: fixed;
@@ -72,7 +103,16 @@
     width:150px;
     height:150px;
     border-style: solid;
-    border-width: 2px ;
+    border-width: 4px ;
+}
+
+.player1Name{
+    position:fixed;
+    left:30%;
+    top:94%;
+    font-size: large;
+    width: 150px;
+    text-align: center;
 }
 
 .player2Picture{
@@ -82,7 +122,16 @@
     width:150px;
     height:150px;
     border-style: solid;
-    border-width: 2px ;
+    border-width: 4px ;
+}
+
+.player2Name{
+    position: fixed;
+    left:85%;
+    top:63%;
+    font-size: large;
+    width: 150px;
+    text-align: center;
 }
 
 .player3Picture{
@@ -92,7 +141,16 @@
     width:150px;
     height:150px;
     border-style: solid;
-    border-width: 2px ;
+    border-width: 4px ;
+}
+
+.player3Name{
+    position: fixed;
+    left:45%;
+    top:7%;
+    width: 150px;
+    text-align: center;
+    font-size: large;
 }
 
 .player4Picture{
@@ -102,7 +160,15 @@
     width:150px;
     height:150px;
     border-style: solid;
-    border-width: 2px ;
+    border-width: 4px ;
+}
+.player4Name{
+    position: fixed;
+    left:8%;
+    top:63%;
+    width: 150px;
+    text-align: center;
+    font-size: large;
 }
 .callBtns{
     position: fixed;
@@ -113,9 +179,15 @@
 .callBtns button{
     width: 100px;
 }
+button:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
 .scoreBoard{
     position: fixed;
-    left:15%;
+    left:10%;
     top:10%;
     font-size: 30px;
 }
@@ -123,7 +195,6 @@
     position:fixed;
     bottom: 40%;
     left: 50%;
-    /* bring your own prefixes */
     transform: translate(-50%);
     display: inline-block;
 }
