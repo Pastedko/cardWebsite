@@ -17,18 +17,20 @@ export class NavigationComponent implements OnInit {
   constructor(public _authService:AuthService,public _user:UserService) { }
   public user:any|User;
   public interval = interval(100);
+  public url:string="";
   subInterval: any;
   routeSub: any;
   async ngOnInit(): Promise<void> {
     
-  
-    await this.getUser();console.log(this.user);
+    setTimeout(async () => {  await this.getUser();console.log(this.user);}, 2000);
+   
   }
   async getUser(){
     let user;
       user = localStorage.getItem('token')!;
       let res = await this._user.getUsername(user).toPromise();
       this.user=res;
+      this.url=`/profile/${this.user._id}`
   }
 
 }
