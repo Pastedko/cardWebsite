@@ -633,7 +633,7 @@ async function gameEnd(game){
     }
     console.log(team1Kapo);
     console.log(team2Kapo)
-    if((myGame.score[0]>=15&&team2Kapo==false)||(myGame.score[1]>=15&&team1Kapo==false)){
+    if((myGame.score[0]>=151&&team2Kapo==false)||(myGame.score[1]>=151&&team1Kapo==false)){
         console.log("hei hei")
         return {result:result,finished:true}
     }

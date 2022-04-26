@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { interval } from 'rxjs/internal/observable/interval';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { User } from '../user';
@@ -12,8 +13,12 @@ export class NavigationComponent implements OnInit {
 
   constructor(public _authService:AuthService,public _user:UserService) { }
   public user:any|User;
+  public interval = interval(100);
+  subInterval: any;
+  routeSub: any;
   async ngOnInit(): Promise<void> {
-    this.user=await this.getUser()
+    
+    setTimeout(async() => { this.user=await this.getUser()}, 2000);
   }
   async getUser(){
     let user;

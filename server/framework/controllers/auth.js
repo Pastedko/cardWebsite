@@ -27,7 +27,8 @@ router.post('/register',async (req,res)=>{
     catch(err){
         const errors=mapErrors(err);
         console.error(err);
-        res.render('register',{data:{username:req.body.username},errors})
+        res.send(err.message)
+        //res.render('register',{data:{username:req.body.username},errors})
     }
 })
 

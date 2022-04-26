@@ -24,6 +24,14 @@ userSchema.index({email:1},{
         strength:2
     }
 })
+userSchema.index({username:1},{
+    unique:true,
+    collation:{
+        locale:'en',
+        strength:2
+    }
+})
+
 
 const User=model('User',userSchema);
 

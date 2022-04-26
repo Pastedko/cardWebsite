@@ -9,9 +9,16 @@ async function register(email, password, username) {
     if (existing) {
         throw new Error('Email is already in use');
     }
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+  {
+    throw new Error("You have entered an invalid email address!")
+  }
     const existing2 = await getUserByUsername(username);
     if (existing2) {
         throw new Error('Username is already in use')
+    }
+    if(password.length<=4){
+        throw new Error("Password must be atleast 5 characters long")
     }
     const hashedPassword = await hash(password, 10);
     const user = new User({
