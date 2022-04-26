@@ -46,7 +46,7 @@ export class GameComponent implements OnInit {
   public positions:any[]=[];
   public names:string[]=[];
   public callPlayer1:any;
-  public myCalls:string[]|any[]=["Clubs","Diamonds","Hearts","Spades","No trums","All trumps"]
+  public myCalls:string[]|any[]=["Clubs","Diamonds","Hearts","Spades","No trumps","All trumps","Pass"]
   public premiums:any={0:"Tierce",1:"Quarte",2:"Quint",3:"Sqare"}
   public premiumsCalled:any[]=[];
   public usedCards:Card[]=[];
@@ -79,6 +79,8 @@ export class GameComponent implements OnInit {
         this.sortHand();
         this._socketGame.deck = []; 
         this.game = await this.getGame();
+        await this.isMyTurn();
+        await this.getPlayerPositions();
         if(this.team==2){
           this.team1Score=this.game.score[1];
           this.team2Score=this.game.score[0];
@@ -87,8 +89,6 @@ export class GameComponent implements OnInit {
         this.team1Score=this.game.score[0];
         this.team2Score=this.game.score[1];
         }
-        await this.isMyTurn();
-        await this.getPlayerPositions();
        
       } 
 
@@ -104,7 +104,7 @@ export class GameComponent implements OnInit {
           this._socketGame.playedCard=null;
           this.isMyTurn();
           await this.getPlayerPositions();
-          setTimeout(() => { this.playedCards.splice(0,4);}, 1000);
+          setTimeout(() => { this.playedCards.splice(0,Math.floor(this.playedCards.length/4)*4);}, 1000);
           console.log("alo")
           this._socketGame.handEnded();
         }
@@ -113,17 +113,33 @@ export class GameComponent implements OnInit {
 
       //call made
       if(this._socketGame.call!=-1){
+        console.log(this._socketGame.call)
         if(this._socketGame.call!="pass"){
         this.highestCall=this._socketGame.call;
         }
+
+
+        let index=-1;
+        let player=this._socketGame.playerCall;
+        for(let i=0;i<this.positions.length;i++){
+          if(JSON.stringify(player)==JSON.stringify(this.positions[i][0])){
+            index=i;
+          }
+        }
+        if(index!=-1){
+          if(this._socketGame.call=="pass"){
+            this.premiumsCalled[index]="Pass";
+          }
+          else
+          this.premiumsCalled[index]=this.myCalls[this._socketGame.call];
+        }
+        setTimeout(() => { this.premiumsCalled[index]=null;}, 3000);
         this._socketGame.call=-1;
         this._socketGame.callMade();
         this.game = await this.getGame();
         await this.isMyTurn();
         await this.getPlayerPositions();
-        if(localStorage.getItem("token")!=null){
-        
-        }
+
       }
 
       //gameStarted
@@ -160,7 +176,7 @@ export class GameComponent implements OnInit {
       }
 
       //premiums
-      if(this.game.handScore[0]==0&&this.game.handScore[1]==0&&this.turn==true&&this.notInGame==false){
+      if(this.game.handScore[0]==0&&this.game.handScore[1]==0&&this.turn==true&&this.notInGame==false&&this.highestCall!=4){
         this.premiumsAllowed=true;
       }
       else this.premiumsAllowed=false;
@@ -242,7 +258,7 @@ export class GameComponent implements OnInit {
     })
 
    
-   // await this.reconnect();
+    await this.reconnect();
 
   }
 
@@ -436,10 +452,13 @@ export class GameComponent implements OnInit {
       this.spades.forEach((el)=>this.hand.push(el))
     }
   }
-  makeCall(index:number){
+  async makeCall(index:number){
     if(index>this.highestCall){
-      this._socketGame.makeCall(index,this.team,this.game);
+      this._socketGame.makeCall(index,this.team,this.game,this.player);
     }
+    this.game = await this.getGame();
+    await this.isMyTurn();
+    await this.getPlayerPositions();
   }
   callPremium(index:number){
     let result=this.canCallPremium(index);
@@ -448,10 +467,6 @@ export class GameComponent implements OnInit {
     }
   }
   canCallPremium(index:number){
-    let clubs2;
-    let diams2;
-    let hearts2;
-    let spades2;
     this.clubs.sort((a,b)=>{
       return a.cardOrder-b.cardOrder
     })
@@ -547,7 +562,7 @@ export class GameComponent implements OnInit {
         }
       }
       for(let i=1;i<this.spades.length-1;i++){
-        if(this.spades[i].cardOrder==this.spades[i-1].cardOrder+1&&this.spades[i].cardOrder+1==this.spades[i+1].cardOrder&&this.hearts[i+1].cardOrder+1==this.hearts[i+2].cardOrder){
+        if(this.spades[i].cardOrder==this.spades[i-1].cardOrder+1&&this.spades[i].cardOrder+1==this.spades[i+1].cardOrder&&this.spades[i+1].cardOrder+1==this.spades[i+2].cardOrder){
           this.usedCards.push(this.spades[i]);
           this.usedCards.push(this.spades[i-1]);
           this.usedCards.push(this.spades[i+1]);
@@ -696,11 +711,10 @@ export class GameComponent implements OnInit {
 }
   async reconnect(){
     this.game=await this.getGame();
-    this._socketGame.reconnect(this.game);
-    this.deck=this.game.deck
+    this._socketGame.reconnect(this.game,this.player);
+    //this.deck=this.game.deck
   }
   continue(){
-    
     this.router.navigate(['/']);
   }
 }

@@ -26,7 +26,7 @@ async function createLobby(lobby) {
             sendMessage(String(el._id),"gameLobby",el._id)
         }
     })
-    if (games.filter(el => el.name == game.name).length != 0) {
+    if (games.filter(el => {return el.name == game.name&&el.exists}).length != 0) {
         throw new Error("Game with that name already exists")
     }
     await game.save();
@@ -119,7 +119,8 @@ async function leaveGame(user, game) {
     // }
     
     if (lobby.players.length == 1) {
-        this.lobby.exists=false;
+        lobby.exists=false;
+        lobby.markModified("exists")
         await lobby.save();
     }
     else {

@@ -100,11 +100,18 @@ async function getUserGames(user) {
     return games;
 }
 
-async function saveGameInMatchHistory(user,game){
+async function saveGameInMatchHistory(user,game,result){
     let myUser=await User.findById(user._id);
     console.log(myUser)
+    if(result=="win"){
+        myUser.wins++;
+    }
+    else
+    myUser.losses++;
+    let filter={_id:myUser._id}
     myUser.allGames.push(game._id);
-    await myUser.save();
+    let updates={allGames:myUser.allGames,wins:myUser.wins,losses:myUser.losses}
+   await User.findOneAndUpdate(filter,updates);
 }
 module.exports = {
     login,

@@ -1,5 +1,5 @@
 
-const { dealCards, playCard, changeTurn, gameStart, makeCall, gameEnd,callPremium } = require('../services/cards')
+const { dealCards, playCard, changeTurn, gameStart, makeCall, gameEnd,callPremium,findUserInGame } = require('../services/cards')
 const jwt = require('jsonwebtoken');
 const Game = require('../models/Games');
 let io;
@@ -21,8 +21,15 @@ exports.socketConnection = (server) => {
         socket.on('disconnect', () => console.log('disconnected'));
 
 
-        socket.on("reconnect",async(game)=>{
+        socket.on("reconnect",async(input)=>{
+            let game=input.game;
+            let user=input.user
+            console.log(typeof findUserInGame)
+            if(findUserInGame(user._id,game)){
+                console.log(user);
             socket.join(String(game._id));
+            }
+            console.log("reconnected")
            // socket.emit()
         })
 
@@ -61,6 +68,7 @@ exports.socketConnection = (server) => {
             let card = input.card;
             let game = input.game;
             let hand = input.hand;
+            if(socket.rooms.has(String(game._id))){
             let result2 = await playCard(card, hand, game);
             io.to(String(game._id)).emit("cardPlayed", card);
             let result = await changeTurn(game)
@@ -92,6 +100,7 @@ exports.socketConnection = (server) => {
                 io.to(String(game._id)).emit("belot",card)
                 console.log("belot")
             }
+        }
         })
 
         socket.on("callMade", async (input) => {
@@ -99,6 +108,8 @@ exports.socketConnection = (server) => {
             let call = input.call;
             let team = input.team
             let game = input.game;
+            let player=input.player
+            if(socket.rooms.has(String(game._id))){
             let result = await makeCall(call, team, game);
             if (result == "gameStart") {
                 io.to(String(game._id)).emit("startGame");
@@ -107,15 +118,18 @@ exports.socketConnection = (server) => {
                 console.log("newCalls")
                 socket.emit("gameEnded")
             }
-            io.to(String(game._id)).emit("callMade", call);
+            io.to(String(game._id)).emit("callMade", {call:call,player:player});
+        }
         })
         
         socket.on("premiumCalled",async (input)=>{
             let highestCard=input.card;
             let game=input.game;
             let call=input.call;
+            if(socket.rooms.has(String(game._id))){
             let result = await callPremium(highestCard,call,game)
             io.to(String(game._id)).emit("premiumCalled",{call:call,player:highestCard.player});
+            }
         })
 
     })

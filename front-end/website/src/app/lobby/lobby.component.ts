@@ -6,6 +6,10 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { SocketService } from '../services/socket.service';
 import { ApplicationInitStatus, Injectable } from '@angular/core';
 import { interval, Observable } from 'rxjs';
+import { Game } from '../game';
+import { User } from '../user';
+import { GameService } from '../services/game.service';
+import { GameSocketService } from '../services/game-socket.service';
 
 
 @Injectable({
@@ -18,40 +22,52 @@ import { interval, Observable } from 'rxjs';
 })
 export class LobbyComponent implements OnInit, OnDestroy {
 
-  constructor(private _auth: AuthService, private router: Router, private _user: UserService, private _socket: SocketService) { }
+  constructor(private _auth: AuthService, private router: Router, private _user: UserService, private _socket: SocketService,private _gameSocket:GameSocketService) { }
 
   interval = interval(500);
   subInterval: any;
   routeSub: any;
 
-  public game = {
-    _id:0,
-    name: "",
-    players: []
-  };
+  public game:Game|any;
   public team1: any = [];
   public team2: any = [];
-
   public players: any = [];
+  public user:User|any;
+  public isOwner = false;
   ngOnDestroy(): void {
     this.subInterval.unsubscribe();
   }
   async ngOnInit(): Promise<void> {
+
     await this.updateLobby();
-    await this._socket.gameHasStarted()
+    await this._socket.gameHasStarted();
     setTimeout(()=>{this.isLobbyOwner();},100);
     this.subInterval = this.interval.subscribe(() => { if (this._socket.hasUpdated == true) { this.updateLobby(); this._socket.hasUpdated = false; } if(this._socket.hasStarted==true)this.router.navigate([`game/${this.game._id}`])})
-
+    await this.getGame();
+    await this.getUser();
+    await this._gameSocket.reconnect(this.game,this.user)
 
   }
-  updateLobby() {
+  async getGame(){
+    const game = this.router.parseUrl(this.router.url).root.children['primary'].segments[1].path;
+    let res=await this._user.getGame(game).toPromise();
+    if(res){
+      this.game=res;
+    }
+  }
+  async getUser(){
+    if (!!localStorage.getItem('token')) {
+      this.user._id = localStorage.getItem('token')!;
+    }
+    else this.user._id = localStorage.getItem('guest')!;
+  }
+  async updateLobby() {
     this.players = [];
     this.team1 = [];
     this.team2 = [];
     const game = this.router.parseUrl(this.router.url).root.children['primary'].segments[1].path;
-    this._user.getGame(game).subscribe(
-      res => {
-        this.game = res; res.players.forEach((el: any[]) => {
+    await this.getGame();
+       this.game.players.forEach((el:[User|number,number]) => {
           if (el[1] == 1) {
             if (typeof el[0] == "number") { this.players.push("Guest " + el[0]); this.team1.push("Guest " + el[0]) }
             else { this.players.push(el[0]); this.team1.push(el[0].username); }
@@ -61,28 +77,11 @@ export class LobbyComponent implements OnInit, OnDestroy {
             else { this.players.push(el[0].username); this.team2.push(el[0].username); }
           }
         });
-      },
-      err => { console.log(err) }
-    );
 
     this._socket.gameLobby();
   }
-  leaveLobbyWithUrl(url: any) {
-    console.log("hello")
-    let user = {
-      _id: ""
-    };
-    if (!!localStorage.getItem('token')) {
-      user._id = localStorage.getItem('token')!;
-    }
-    else user._id = localStorage.getItem('guest')!;
-    const game = url
-    this._user.leaveGame(user, game).subscribe(
-      res => { this._socket.leaveGame(game); this.router.navigate(['/']) },
-      err => { console.log(err) }
-    );
-  }
-  public isOwner = false;
+
+
 
   isLobbyOwner() {
     let user = {
@@ -98,7 +97,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     else {
       user._id = localStorage.getItem('guest')!;
       this._user.getGuest(user._id).subscribe(
-        res => { ; if (this.players[0] == `Guest ${res}`) { this.isOwner = true; } },
+        res => { if (this.players[0] == `Guest ${res}`) { this.isOwner = true; } },
         err => { console.log(err) }
       );
     }

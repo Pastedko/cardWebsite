@@ -470,7 +470,7 @@ async function gameEnd(game){
     let team2Points=myGame.handScore[1];
     let team1PremiumPoints=0;
     let team2PremiumPoints=0;
-    let team1Score=0
+    let team1Score=0;
     let team2Score=0;
     let team1BelotCount=0;
     let team2BelotCount=0;
@@ -559,7 +559,7 @@ async function gameEnd(game){
             team1Score-=100;
         }
         console.log("team 2 vutre")
-        team1core+=team2Points+team1Points+team1PremiumPoints+team2PremiumPoints;
+        team1Score+=team2Points+team1Points+team1PremiumPoints+team2PremiumPoints;
     }
     else if(team1Points<team2Points&&caller==2){
         if(team1Points==0){
@@ -638,6 +638,26 @@ async function gameEnd(game){
         return {result:result,finished:true}
     }
     return {result,finished:false};
+}
+function findUserInGame(user, game) {
+
+    if (typeof user == "number") {
+        if (game.players.filter(el=>el[0]==user).length> 0) return true;
+        else return false;
+    }
+    else {
+       // console.log(game)
+        let flag=false;
+        game.players.forEach(el=>{
+            if(String(el[0]._id)==String(user))flag=true;
+        })
+      //  console.log(flag)
+        //console.log(game)
+        if (flag)return true;
+        else { return false; }
+    }
+
+
 }
 
 async function allowedCards(hand,game){
@@ -806,5 +826,6 @@ module.exports = {
     findCard,
     gameEnd,
     callPremium,
-    checkPremium
+    checkPremium,
+    findUserInGame
 }

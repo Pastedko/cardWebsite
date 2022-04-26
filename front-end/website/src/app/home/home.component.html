@@ -4,9 +4,12 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-
 <div class="cars-horizon" scrolling="auto">
-    <div class="container">
+    
+    <div  *ngIf="games.length==0">
+        <p>No games found</p>
+    </div>
+    <div *ngIf="games.length!=0" class="container">
         <div class="row">
             <div *ngFor="let game of games, let i =index" class="col-md-9">
                 <div class="row py-2">

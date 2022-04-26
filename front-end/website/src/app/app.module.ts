@@ -30,6 +30,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { DatePipe } from '@angular/common';
 import { NavigationComponent } from './navigation/navigation.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const config:SocketIoConfig={
   url:environment.socketUrl,
@@ -51,6 +52,7 @@ const config:SocketIoConfig={
     ProfileComponent,
     EditProfileComponent,
     NavigationComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { Game } from '../game';
 import { Card } from '../game/card';
+import { User } from '../user';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -24,6 +25,7 @@ export class GameSocketService {
   public belot:any=false;
   public showResults:boolean|Game=false;
   public gameHasFinished:boolean=false;
+  public playerCall:any|User;
 
   dealCards(){
     this.socket.on("dealCards",async(cards:any[])=>{
@@ -50,16 +52,17 @@ export class GameSocketService {
       this.playedCard="ended";
     })
   }
-  makeCall(call:number,team:number,game:any){
-    this.socket.emit("callMade",{call:call,team:team,game:game});
+  makeCall(call:number,team:number,game:any,player:User){
+    this.socket.emit("callMade",{call:call,team:team,game:game,player:player});
   }
   callMade(){
-    this.socket.on("callMade",(call:number)=>{
-      if(call==7){
+    this.socket.on("callMade",(input:any)=>{
+      this.playerCall=input.player
+      if(input.call==7){
         this.call="pass"
       }
       else
-      this.call=call;
+      this.call=input.call;
     })
   }
   startGame(){
@@ -97,8 +100,8 @@ export class GameSocketService {
       this.belot=card;
     })
   }
-  reconnect(game:any){
-    this.socket.emit("reconnect",game);
+  reconnect(game:Game,user:User){
+    this.socket.emit("reconnect",{game:game,user:user});
   }
   showResult(){
     this.socket.on("showResult",(game:any)=>{

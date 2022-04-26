@@ -9,6 +9,7 @@ import { LobbyComponent } from '../lobby/lobby.component';
 import { interval, Observable } from 'rxjs';
 import { PasswordForLobbyComponent } from '../password-for-lobby/password-for-lobby.component';
 import {MatDialog} from '@angular/material/dialog';
+import { Game } from '../game';
 
 
 @Component({
@@ -19,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
 export class HomeComponent implements OnInit,OnDestroy {
 
   constructor(private _auth:AuthService,private router:Router,private _user:UserService,private _socket:SocketService,private _lobby:LobbyComponent,public dialog: MatDialog) { }
-  public games:Array<any>=[];
+  public games:Array<Game>=[];
   interval=interval(1000);
   subInterval:any;
   routeSub:any;
@@ -35,6 +36,7 @@ export class HomeComponent implements OnInit,OnDestroy {
       )
     }
     this.getGames();
+    console.log(this.games.length)
     //this.games=this.getGames();
    // if(this.games.length==0){
     //}

@@ -112,13 +112,19 @@
 
 
       <div [style.display]="callActive&&scoreScreen==null ? 'inline-block':'none'"  class="calls" #calls>
-        <button [disabled]="highestCall>=5" (click)="makeCall(5)"> All trumps </button> 
-        <button [disabled]="highestCall>=4" (click)="makeCall(4)"> No trumps </button>
-        <button [disabled]="highestCall>=3" (click)="makeCall(3)"> Spades </button>
-        <button [disabled]="highestCall>=2" (click)="makeCall(2)"> Hearts </button>
-        <button [disabled]="highestCall>=1" (click)="makeCall(1)"> Diamonds </button>
-        <button [disabled]="highestCall>=0" (click)="makeCall(0)"> Clubs </button>
-        <button (click)="makeCall(7)"> Pass </button>
+        <table>
+        <tr>
+          <button style="width: 100px;" [disabled]="highestCall>=5" (click)="makeCall(5)"> All trumps </button> 
+          <button style="width: 100px;" [disabled]="highestCall>=2" (click)="makeCall(2)"> Hearts </button>
+        </tr>
+       <tr><button style="width: 100px;" [disabled]="highestCall>=4" (click)="makeCall(4)"> No trumps </button>
+       <button style="width: 100px;" [disabled]="highestCall>=1" (click)="makeCall(1)"> Diamonds </button>
+      </tr> 
+        <button style="width: 100px;" [disabled]="highestCall>=3" (click)="makeCall(3)"> Spades </button>
+        <button style="width: 100px;" [disabled]="highestCall>=0" (click)="makeCall(0)"> Clubs </button>
+       <tr>
+         <button style="width: 100px;" (click)="makeCall(7)"> Pass </button></tr> 
+      </table>
         <!-- <button (click)="makeCall(6)"> Double </button> -->
       </div>
    <div class="playerCards">
