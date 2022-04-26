@@ -17,6 +17,7 @@ The rules of the game of belot are mostly the same with some minor changes due t
 - run "ng serve" in cmd to run the front-end
 - run "node index" in cmd to start the server
 
-# Rules to belot (without the made adjusments) - https://belot.bg/en/rules-belot/
+# Rules to belot:
+(without the made adjusments) - https://belot.bg/en/rules-belot/
 
 # Creator: Teodor Kovachev
