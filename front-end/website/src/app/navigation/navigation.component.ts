@@ -22,15 +22,17 @@ export class NavigationComponent implements OnInit {
   routeSub: any;
   async ngOnInit(): Promise<void> {
     
-    setTimeout(async () => {  await this.getUser();console.log(this.user);}, 2000);
+    setTimeout(async () => {  await this.getUser();}, 2000);
    
   }
   async getUser(){
     let user;
       user = localStorage.getItem('token')!;
+      if(user){
       let res = await this._user.getUsername(user).toPromise();
       this.user=res;
       this.url=`/profile/${this.user._id}`
+      }
   }
 
 }

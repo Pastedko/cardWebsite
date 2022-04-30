@@ -29,9 +29,7 @@ export class GameSocketService {
 
   dealCards(){
     this.socket.on("dealCards",async(cards:any[])=>{
-      console.log("hello from socket dealCards")
       this.deck=cards;
-      console.log(this.deck)
     })
   }
   playCard(card:any,hand:any,game:any){
@@ -67,13 +65,11 @@ export class GameSocketService {
   }
   startGame(){
     this.socket.on("startGame",()=>{
-      console.log("hello my dudes the game has started")
       this.gameStarted=true;
     })
   }
   wrongCard(){
     this.socket.on("wrongCard",()=>{
-      console.log("wrong card");
       this.isPlayed=false;
     })
   }

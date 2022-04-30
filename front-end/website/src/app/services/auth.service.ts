@@ -10,7 +10,6 @@ export class AuthService {
   private _guestUrl="http://localhost:3000/guest"
   constructor(private http:HttpClient,private router:Router) { }
   registerUser(user:object){
-    console.log(user)
    
     return this.http.post<any>(this._registerUrl,user,{
       headers:new HttpHeaders({
@@ -19,7 +18,6 @@ export class AuthService {
     })
   }
   loginUser(user:object){
-    console.log(user)
     
     return this.http.post<any>(this._loginUrl,user,{
       headers:new HttpHeaders({
@@ -32,7 +30,7 @@ export class AuthService {
     localStorage.removeItem('token');
     this.guestUser().subscribe(
       res=>{localStorage.setItem('guest',res.token)},
-      err=>console.log(err)
+      err=>alert(err.error)
     );
     this.router.navigate(['/'])
   }

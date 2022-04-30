@@ -35,7 +35,6 @@ export class EditProfileComponent implements OnInit {
     this.updates.user=this.user
     this.updates.birthday = this.pipe.transform(this.updates.birthday, 'yyyy-MM-dd');
     this.updates.profilePicture=this.user.profilePicture;
-    console.log(this.user.birthday)
    // this.getPicture();
       this.url=this.user.profilePicture
     
@@ -59,7 +58,6 @@ export class EditProfileComponent implements OnInit {
   }
   getPicture(){
     let res=this._user.getPicture(this.user).toPromise();
-    console.log(res);
   }
   getUser(){
     let user;
@@ -80,13 +78,13 @@ export class EditProfileComponent implements OnInit {
     if(this.selectedFile!=null&&!this.url.includes("http://localhost")){
     fd.set('profilePicture',this.selectedFile);
     this._user.updateProfile(fd).subscribe(
-    res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
+    res=>{this.router.navigate([`/profile/${String(this.user._id)}`])},
     err=>{alert(err.error)});
     }
     else {
       fd.set("profilePicture",this.updates.profilePicture)
       this._user.updateProfile2(fd).subscribe(
-      res=>{console.log("1");this.router.navigate([`/profile/${String(this.user._id)}`])},
+      res=>{this.router.navigate([`/profile/${String(this.user._id)}`])},
       err=>{alert(err.error)});
 
       if(this.removed==true){

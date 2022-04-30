@@ -105,7 +105,6 @@ export class GameComponent implements OnInit {
           this.isMyTurn();
           await this.getPlayerPositions();
           setTimeout(() => { this.playedCards.splice(0,Math.floor(this.playedCards.length/4)*4);}, 1000);
-          console.log("alo")
           this._socketGame.handEnded();
         }
        
@@ -113,7 +112,6 @@ export class GameComponent implements OnInit {
 
       //call made
       if(this._socketGame.call!=-1){
-        console.log(this._socketGame.call)
         if(this._socketGame.call!="pass"){
         this.highestCall=this._socketGame.call;
         }
@@ -217,9 +215,7 @@ export class GameComponent implements OnInit {
 
       //showResult
       if(this._socketGame.showResults!=false){
-        console.log("hello")
         this.scoreScreen=this._socketGame.showResults;
-        console.log(this.scoreScreen);
         this._socketGame.showResults=false;
         if(this.team==2){
           let sub=this.scoreScreen["team1"];
@@ -368,7 +364,6 @@ export class GameComponent implements OnInit {
           case "clubs":{this.clubs.push(this.deck[i]);break;}
           case "hearts":{this.hearts.push(this.deck[i]);break;}
           case "diams":{this.diams.push(this.deck[i]);break;}
-          default:console.log("ERROR!");
         }
       }
     }
@@ -387,7 +382,6 @@ export class GameComponent implements OnInit {
         case "clubs":{this.clubs.push(this.deck[i]);break;}
         case "hearts":{this.hearts.push(this.deck[i]);break;}
         case "diams":{this.diams.push(this.deck[i]);break;}
-        default:console.log("ERROR!");
       }
     }} 
   }

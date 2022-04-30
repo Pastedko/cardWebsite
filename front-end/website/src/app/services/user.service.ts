@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import{io} from "socket.io-client"
+import { Game } from '../game';
+import { User } from '../user';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +35,7 @@ export class UserService {
   getGames(){
     return this.http.get<any>(this._getGamesUrl)
   }
-  joinGame(user:any,game:String){
+  joinGame(user:any,game:string){
     return this.http.post<any>(`${this._joingGameUrl}${game}`,user,{
       headers:new HttpHeaders({
         "cjarset":"utf-8"
@@ -43,30 +45,28 @@ export class UserService {
   getGame(game:any){
     return this.http.get<any>(`${this._getGameUrl}${game}`);
   }
-  getUsername(id:any){
+  getUsername(id:string){
     return this.http.get<any>(`${this._getUsernameUrl}${id}`);
   }
-  getGuest(id:any){
+  getGuest(id:string){
     return this.http.get<any>(`${this._getGuestUrl}${id}`);
   }
-  leaveGame(user:any,game:any){
+  leaveGame(user:any,game:string){
     return this.http.post<any>(`${this._leaveGameUrl}${game}`,user);
   }
-  changeTeam(user:any,game:any){
+  changeTeam(user:object,game:string){
     return this.http.post<any>(`${this._changeTeamUrl}${game}`,user)
   }
   updateProfile(information:any){
-    //console.log(updates)
     return this.http.post<any>(`${this._updateProfile}`,information);
   }
   updateProfile2(information:any){
-    console.log(information.get("username"))
     return this.http.post<any>(`${this._updateProfile2}`,information);
   }
-  getPicture(user:any){
+  getPicture(user:User){
     return this.http.post<any>(this._getPicure,{user:user});
   }
-  removePicture(user:any){
+  removePicture(user:User){
     return this.http.post<any>(`${this._removePicture}`,{user:user})
   }
 }

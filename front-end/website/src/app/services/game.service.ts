@@ -20,11 +20,9 @@ export class GameService {
     return this.http.post<any>(this._checkCardsUrl,{card:card,hand:hand,game:game});
   }
   getGamesOfUser(user:User){
-    console.log(user);
     return this.http.post<any>(this._getGamesOfUser,{user:user});
   }
   gameFinished(game:any|Game,user:any|User){
-    console.log("hello")
     return this.http.post<any>(this._gameFinished,{game:game,user:user});
   }
 }

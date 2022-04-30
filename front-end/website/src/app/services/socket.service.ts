@@ -39,7 +39,6 @@ export class SocketService {
   }
   homeGames(){
     this.socket.on("homeGames", () => {
-      console.log("hello")
       this.homeUpdated=true;
     })
   }

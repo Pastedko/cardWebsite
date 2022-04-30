@@ -90,15 +90,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
     if (!!localStorage.getItem('token')) {
       user._id = localStorage.getItem('token')!;
       this._user.getUsername(user._id).subscribe(
-        res => {console.log(this.players[0]); if (this.players[0].username == res.username) { this.isOwner = true; } },
-        err => { console.log(err) }
+        res => { if (this.players[0].username == res.username) { this.isOwner = true; } },
+        err => { alert(err.error);}
       )
     }
     else {
       user._id = localStorage.getItem('guest')!;
       this._user.getGuest(user._id).subscribe(
         res => { if (this.players[0] == `Guest ${res}`) { this.isOwner = true; } },
-        err => { console.log(err) }
+        err => { alert(err.error);}
       );
     }
   }
@@ -114,7 +114,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     const game = this.router.parseUrl(this.router.url).root.children['primary'].segments[1].path;
     this._user.leaveGame(user, game).subscribe(
       res => { this._socket.leaveGame(game); this.router.navigate(['/']) },
-      err => { console.log(err) }
+      err => { alert(err.error); }
     );
   }
   changeTeam(team: number) {
@@ -123,8 +123,6 @@ export class LobbyComponent implements OnInit, OnDestroy {
     let user = {
       _id: ""
     };
-    console.log(this.team1);
-    console.log(this.team2);
     if ((team == 2 && this.team2.length < 2) || (team == 1 && this.team1.length < 2)) {
       if (!!localStorage.getItem('token')) {
         user._id = localStorage.getItem('token')!;
@@ -132,16 +130,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
           res => {
 
              username=res.username
-             console.log(this.team1.indexOf(username)!=-1&&team==2)
              if((this.team1.indexOf(username)!=-1&&team==2)||(this.team2.indexOf(username)!=-1&&team==1)){
               const game = this.router.parseUrl(this.router.url).root.children['primary'].segments[1].path;
               this._user.changeTeam(user, game).subscribe(
-                res => { this._socket.gameLobbyUpdate(res._id); console.log(res._id) },
-                err => { console.log(err); }
+                res => { this._socket.gameLobbyUpdate(res._id);},
+                err => { alert(err.error); }
               )
               }
             },
-          err => { console.log(err) })
+          err => {alert(err.error); })
       }
       else {
         user._id = localStorage.getItem('guest')!;
@@ -149,17 +146,16 @@ export class LobbyComponent implements OnInit, OnDestroy {
           res => { 
 
             username=`Guest ${res}`
-            console.log(this.team1.indexOf(username))
             if((this.team1.indexOf(username)!=-1&&team==2)||(this.team2.indexOf(username)!=-1&&team==1)){
               const game = this.router.parseUrl(this.router.url).root.children['primary'].segments[1].path;
               this._user.changeTeam(user, game).subscribe(
-                res => { this._socket.gameLobbyUpdate(res._id); console.log(res._id) },
-                err => { console.log(err); }
+                res => { this._socket.gameLobbyUpdate(res._id); },
+                err => { alert(err.error); }
               )
               }
           
           },
-          err => { console.log(err) })
+          err => { alert(err.error);})
       }
       
     }

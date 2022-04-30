@@ -19,7 +19,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
   login(){
-    console.log(this.loginUserData)
     this._auth.loginUser(this.loginUserData).subscribe(
       res=>{localStorage.clear();localStorage.setItem('token',res.token);this.navbar.getUser();this.router.navigate(['/']);},
       err=>alert(err.error)

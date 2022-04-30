@@ -32,11 +32,10 @@ export class HomeComponent implements OnInit,OnDestroy {
     if(localStorage.length==0){
       this._auth.guestUser().subscribe(
         res=>{localStorage.setItem('guest',res.token)},
-        err=>console.log(err)
+        err=>{}
       )
     }
     this.getGames();
-    console.log(this.games.length)
     //this.games=this.getGames();
    // if(this.games.length==0){
     //}
@@ -63,7 +62,7 @@ export class HomeComponent implements OnInit,OnDestroy {
         this.games.push(el)
         }
       });},
-      err=>{console.log(err);}
+      err=>{alert(err.error)}
     )
     this._socket.homeGames();
   }
@@ -79,20 +78,14 @@ export class HomeComponent implements OnInit,OnDestroy {
     let myGame={
       password:""
     }
-  //  this._user.getGame(game).subscribe(
-  //    res=>myGame=res,
-   //   err=>console.log(err)
-   // );
     if(this.games[i].password){
       this.secret=this.games[i].password
       this.generate().subscribe((password:string) => {
         const isPwdValid = password === this.secret;
-        console.log(isPwdValid);
         if (isPwdValid) {
-          console.log("hello")
           this._user.joinGame(user,game).subscribe(
             res=>{this.router.navigate([`lobby/${res._id}`]);this._socket.joinGame(res._id);},
-            err=>console.log(err)
+            err=>{alert(err.error)}
           )
         }
       });
@@ -100,7 +93,7 @@ export class HomeComponent implements OnInit,OnDestroy {
     else{
     this._user.joinGame(user,game).subscribe(
       res=>{this.router.navigate([`lobby/${res._id}`]);this._socket.joinGame(res._id);},
-      err=>console.log(err)
+      err=>{alert(err.error)}
     );
     
     }

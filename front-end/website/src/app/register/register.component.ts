@@ -18,10 +18,9 @@ export class RegisterComponent implements OnInit {
   };
   constructor(private _auth:AuthService,private router:Router,private cookieService:CookieService,private navbar:NavigationComponent) { }
   register(){
-    console.log(this.registerUserData)
     this._auth.registerUser(this.registerUserData).subscribe(
       res=>{localStorage.clear();localStorage.setItem('token',res.token);this.navbar.getUser();this.router.navigate(['/']);},
-      err=>{console.log(err.error.text);alert(err.error.text)}
+      err=>{alert(err.error.text);alert(err.error.text)}
     )
   }
   ngOnInit(): void {

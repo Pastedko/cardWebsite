@@ -45,38 +45,30 @@ export class ProfileComponent implements OnInit {
     this.games.forEach((game:any,index:number)=>{
       let team=0;
     game.players.forEach((el:any) => {
-      console.log(JSON.stringify(el[0]))
-      console.log(JSON.stringify(this.user))
       if(JSON.stringify(el[0]._id)==JSON.stringify(this.user._id)){
-        console.log("hi");team=el[1];}
+       team=el[1];}
     });
-    console.log(this.user)
     if(game.score[0]>game.score[1]&&team==1){
-      console.log("hi")
       this.results.push("WIN");
     }
     else if(game.score[0]>game.score[1]&&team==2){
-      console.log("hi")
       this.results.push("LOSS");
     }
     else if(game.score[0]<=game.score[1]&&team==1){
-      console.log("hi")
       this.results.push("LOSS")
     }
     else if(game.score[0]<=game.score[1]&&team==2){
-      console.log("hi")
       this.results.push("WIN")
     }
-    console.log(this.results)
       this.players.push([]);
         game.players.forEach((el: any[]) => {
-            if (typeof el[0] == "number") {console.log(el[0]); this.players[index].push("Guest " + el[0]);}
-            else {console.log(el[0]); this.players[index].push(el[0].username);}
+            if (typeof el[0] == "number") { this.players[index].push("Guest " + el[0]);}
+            else { this.players[index].push(el[0].username);}
           
 
         });
       },
-      (err:any) => { console.log(err) }
+      (err:any) => { alert(err.error); }
     );
   }
   editProfile(){

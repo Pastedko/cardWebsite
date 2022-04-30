@@ -17,7 +17,12 @@ export class CreateComponent implements OnInit {
     password:"",
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    let user=await this.getUser();
+    console.log(typeof user=="number")
+    if(typeof user=="number")user="Guest "+user;
+    else user=user.username
+    this.createData.name=user+"'s game"
   }
   createLobby(){
     let lobby={
@@ -36,5 +41,18 @@ export class CreateComponent implements OnInit {
       res=>{this.router.navigate([`/lobby/${res._id}`]);this._socket.createGame(res._id);},
       err=>alert(err.error)
     );
+  }
+  async getUser() {
+    let user;
+    if (!!localStorage.getItem('token')) {
+      user = localStorage.getItem('token')!;
+      let res = this._user.getUsername(user).toPromise();
+      return res;
+    }
+    else {
+      user = localStorage.getItem('guest')!;
+      let res = this._user.getGuest(user).toPromise();
+      return res;
+    }
   }
 }
