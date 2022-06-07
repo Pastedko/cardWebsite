@@ -27,7 +27,6 @@ export class HomeComponent implements OnInit,OnDestroy {
   secret = 'YESRUNFUNCTION';
 
   ngOnInit(): void {
-
     this.subInterval=this.interval.subscribe(()=>{if(this._socket.homeUpdated==true){this.getGames();this._socket.homeUpdated=false;}})
     if(localStorage.length==0){
       this._auth.guestUser().subscribe(

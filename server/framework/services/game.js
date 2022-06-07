@@ -21,7 +21,7 @@ async function createLobby(lobby) {
     game.players.push([player,1]);
     let games = await getAllGames();
     games.forEach(el => {
-        if (findUserInGame(player._id, el)) {
+        if (findUserInGame(player, el)) {
             leaveGame(player, el._id)
             sendMessage(String(el._id),"gameLobby",el._id)
         }
@@ -92,7 +92,7 @@ async function findGameById(id) {
     return game;
 }
 function findUserInGame(user, game) {
-
+    
     if (typeof user == "number") {
         if (game.players.filter(el=>el[0]==user).length> 0) return true;
         else return false;

@@ -44,8 +44,6 @@ async function login(email, password) {
 //TODO change identifier
 
 async function updateProfile(user, updates, file) {
-    console.log("hi")
-    console.log(file)
     const myUser = await User.findById(user);
     if (myUser) {
         const existing2 = await getUserByUsername(updates.username);
@@ -54,7 +52,6 @@ async function updateProfile(user, updates, file) {
                 throw new Error('Username is already in use')
         }
         myUser.username = updates.username;
-        console.log(file)
             if (myUser.profilePicture != 'http://localhost:3000/uploads/guest-user-250x250.jpg') {
                 //var result = findRemoveSync('uploads', { files: myUser.profilePicture.split('uploads\\')[1] })
             }
@@ -102,7 +99,6 @@ async function getUserGames(user) {
 
 async function saveGameInMatchHistory(user,game,result){
     let myUser=await User.findById(user._id);
-    console.log(myUser)
     if(result=="win"){
         myUser.wins++;
     }

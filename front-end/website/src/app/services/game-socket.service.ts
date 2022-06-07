@@ -109,4 +109,7 @@ export class GameSocketService {
       this.gameHasFinished=true;
     })
   }
+  submitCards(cards:Card[],game:Game,user:User){
+    this.socket.emit("submitCards",{cards:cards,game:game,user:user});
+  }
 }

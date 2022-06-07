@@ -15,7 +15,7 @@ const gamesSchema=new Schema({
     lastHandWinner:{type:Number,default:-1},
     playedCards:{type:Array,default:[]},
     passCount:{type:Number,default:0},
-    deck:{type:[],default:[]},
+    cards:{type:[],default:[[],[],[],[]]},
     exists:{type:Boolean,default:true}
 })
 

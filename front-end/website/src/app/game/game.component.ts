@@ -9,6 +9,7 @@ import { GameSocketService } from '../services/game-socket.service';
 import { Card } from './card';
 import { Game } from '../game';
 import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
+import { User } from '../user';
 
 @Component({
   selector: 'app-game',
@@ -30,7 +31,7 @@ export class GameComponent implements OnInit {
   public pfp:string[]=[];
   public turn:boolean=false;
   public notInGame=true;
-  public callActive=this.notInGame&&this.turn;
+  public callActive=this.notInGame&&this.turn&&this.hand.length<=5;
   public highestCall=-1;
   public clubs:Card[]=[];
   public hearts:Card[]=[];
@@ -174,7 +175,7 @@ export class GameComponent implements OnInit {
       }
 
       //premiums
-      if(this.game.handScore[0]==0&&this.game.handScore[1]==0&&this.turn==true&&this.notInGame==false&&this.highestCall!=4){
+      if(this.game.handScore[0]==0&&this.game.handScore[1]==0&&this.turn==true&&this.hand.length==8&&this.highestCall!=4){
         this.premiumsAllowed=true;
       }
       else this.premiumsAllowed=false;
@@ -349,7 +350,16 @@ export class GameComponent implements OnInit {
       }
     });
     this.turn=playerInGame[2];
-    this.callActive=this.notInGame&&this.turn;
+    this.callActive=this.notInGame&&this.turn&&this.hand.length<=5;
+    console.log(this.game.handScore[0]==0)
+    console.log(this.game.handScore[1]==0)
+    console.log(this.turn==true);
+    console.log(this.notInGame==false);
+    console.log(this.highestCall);
+    if(this.game.handScore[0]==0&&this.game.handScore[1]==0&&this.turn==true&&this.hand.length==8&&this.highestCall!=4){
+      this.premiumsAllowed=true;
+    }
+    else this.premiumsAllowed=false;
   }
   dealCards() {
     this.playerNum = this.getPlayerNum();
@@ -384,6 +394,8 @@ export class GameComponent implements OnInit {
         case "diams":{this.diams.push(this.deck[i]);break;}
       }
     }} 
+
+
   }
    checkBelot(card:Card){
     if(card.face=="Q"){
@@ -413,7 +425,10 @@ export class GameComponent implements OnInit {
         this._socketGame.playCard(card,this.hand,this.game);
         this.hand.splice(index,1)
         this.cardPassed=true;
-
+        if(this.deck.length!=0){
+          console.log("1")
+        this.sendCards()
+        }
     }}
   }
   sortHand(){
@@ -445,6 +460,10 @@ export class GameComponent implements OnInit {
       this.hearts.forEach((el)=>this.hand.push(el))
       this.spades.forEach((el)=>this.hand.push(el))
     }
+    if(this.deck.length!=0){
+      console.log("2")
+      this.sendCards()
+      }
   }
   async makeCall(index:number){
     if(index>this.highestCall){
@@ -706,9 +725,23 @@ export class GameComponent implements OnInit {
   async reconnect(){
     this.game=await this.getGame();
     this._socketGame.reconnect(this.game,this.player);
-    //this.deck=this.game.deck
+    let index=-1;
+    for(let i=0;i<4;i++){
+      if(JSON.stringify(this.game.players[i][0])==JSON.stringify(this.player)||this.game.players[i][0]==this.player)index=i;
+    }
+    this.hand=this.game.cards[index];
+    this.playedCards=this.game.playedCards;
+    this.highestCall=this.game.contract;
+    await this.isMyTurn();
+   
+    console.log(this.game);
+    console.log(this.premiumsAllowed)
   }
   continue(){
     this.router.navigate(['/']);
   }
+  sendCards(){
+    this._socketGame.submitCards(this.hand,this.game,this.player);
+  }
+
 }

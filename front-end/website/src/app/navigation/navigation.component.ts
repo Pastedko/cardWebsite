@@ -23,7 +23,6 @@ export class NavigationComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     
     setTimeout(async () => {  await this.getUser();}, 2000);
-   
   }
   async getUser(){
     let user;

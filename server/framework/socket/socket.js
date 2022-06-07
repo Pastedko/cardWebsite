@@ -1,5 +1,5 @@
 
-const { dealCards, playCard, changeTurn, gameStart, makeCall, gameEnd,callPremium,findUserInGame } = require('../services/cards')
+const { dealCards, playCard, changeTurn, gameStart, makeCall, gameEnd,callPremium,findUserInGame, updateCards } = require('../services/cards')
 const jwt = require('jsonwebtoken');
 const Game = require('../models/Games');
 let io;
@@ -30,7 +30,6 @@ exports.socketConnection = (server) => {
             socket.join(String(game._id));
             }
             console.log("reconnected")
-           // socket.emit()
         })
 
         socket.on("gameLobbyJoin", async (game) => {
@@ -130,6 +129,12 @@ exports.socketConnection = (server) => {
             let result = await callPremium(highestCard,call,game)
             io.to(String(game._id)).emit("premiumCalled",{call:call,player:highestCard.player});
             }
+        })
+        socket.on("submitCards",async (input)=>{
+            let cards=input.cards;
+            let player=cards[0].player;
+            let game=input.game;
+            updateCards(player,cards,game)
         })
 
     })

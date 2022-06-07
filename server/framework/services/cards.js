@@ -11,6 +11,7 @@ const { default: mongoose, Types, ObjectId } = require('mongoose');
 const socket  = require('../socket/socket');
 const e = require('express');
 const res = require('express/lib/response');
+const { update } = require('../models/Games');
 
 let faces = ["7", "8", "9", "J", "Q", "K","10", "A"];
 let facePowers = [1,3, 5, 7, 9, 11, 13, 15];
@@ -269,6 +270,22 @@ async function beginHand(game){
     
     myGame.save()
 }
+
+async function updateCards(player,cards,game){
+    let myGame = await Game.findById(game._id);
+    let index=-1;
+    myGame.players.forEach((el,i)=>{
+
+        if(el[0]==player||JSON.stringify(el[0])==JSON.stringify(player))index=i;
+    })
+    if(index!=-1){
+        myGame.cards[index]=cards;
+        let filter={_id:myGame._id};
+        let updates={cards:myGame.cards}
+        await Game.findOneAndUpdate(filter,updates);
+    }
+}
+
 async function makeCall(call,team, game) {
     let myGame = await Game.findById(game._id);
     if (call != 7) {
@@ -408,8 +425,6 @@ async function sortPremiums(game){
         }
     })
     let winner=-1;
-    console.log(biggestTeam1)
-    console.log(biggestTeam2)
     if(biggestTeam1!=-2&&biggestTeam2!=-2){
         if(biggestTeam1[0]>biggestTeam2[0]){
             //team1
@@ -560,6 +575,7 @@ async function gameEnd(game){
         }
         console.log("team 2 vutre")
         team1Score+=team2Points+team1Points+team1PremiumPoints+team2PremiumPoints;
+        team2Score-=100;
     }
     else if(team1Points<team2Points&&caller==2){
         if(team1Points==0){
@@ -827,5 +843,6 @@ module.exports = {
     gameEnd,
     callPremium,
     checkPremium,
-    findUserInGame
+    findUserInGame,
+    updateCards
 }
